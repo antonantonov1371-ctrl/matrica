@@ -1,0 +1,4 @@
+[functions.matrica-push]
+# Requests are authenticated explicitly: user JWT for device actions,
+# a separate scheduler secret for background dispatch. No service key in the browser.
+verify_jwt = false
