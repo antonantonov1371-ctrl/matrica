@@ -1,7 +1,28 @@
 'use strict';
-// No task or account data is cached by this worker.
-self.addEventListener('install', event => event.waitUntil(self.skipWaiting()));
-self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
+// Only public application files are cached. Account data stays in account-scoped local storage.
+const APP_CACHE='matrica-shell-20261120-offline-v2';
+const APP_ASSETS=['./','index.html','task-core.js?v=20261119','workflow.js?v=20261120-app','workflow.css?v=20261120-app','offline.js?v=20261120-offline2','push-client.js?v=20261119','vendor/supabase-2.49.8.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
+self.addEventListener('install',event=>event.waitUntil((async()=>{
+ const cache=await caches.open(APP_CACHE);
+ await cache.addAll(APP_ASSETS.map(path=>new Request(new URL(path,self.registration.scope),{cache:'reload'})));
+ await self.skipWaiting();
+})()));
+self.addEventListener('activate',event=>event.waitUntil((async()=>{
+ await Promise.all((await caches.keys()).filter(key=>key.startsWith('matrica-shell-')&&key!==APP_CACHE).map(key=>caches.delete(key)));
+ await self.clients.claim();
+})()));
+self.addEventListener('fetch',event=>{
+ const url=new URL(event.request.url),scope=new URL(self.registration.scope);
+ if(event.request.method!=='GET'||url.origin!==scope.origin||!url.pathname.startsWith(scope.pathname))return;
+ const asset=APP_ASSETS.find(path=>new URL(path,scope).pathname===url.pathname);
+ if(event.request.mode!=='navigate'&&!asset)return;
+ event.respondWith((async()=>{
+ const cache=await caches.open(APP_CACHE);
+ // Serve a complete, consistent release; worker installation updates it atomically.
+ if(event.request.mode==='navigate')return (await cache.match(new URL('index.html',scope)))||fetch(event.request);
+ return (await cache.match(new URL(asset,scope)))||fetch(event.request);
+ })());
+});
 self.addEventListener('push', event => {
   let payload={};
   try { payload=event.data?.json() || {}; } catch {}

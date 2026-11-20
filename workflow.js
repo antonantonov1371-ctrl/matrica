@@ -2,6 +2,13 @@
 const Core=MatricaCore;
 const workflow={query:'',tag:'',smart:'section',sort:'manual',selecting:false,ids:new Set(),undo:null,archive:'completed',collapsed:new Set(),userId:null};
 let detailsDraft=null,taskGestureBlockUntil=0;
+const calendarPreferenceKey='matrica.calendar-panels.v1';
+let calendarPanels={day:true,week:true};
+try{const saved=JSON.parse(localStorage.getItem(calendarPreferenceKey));for(const section of ['day','week'])if(typeof saved?.[section]==='boolean')calendarPanels[section]=saved[section]}catch{}
+function toggleCalendar(){if(!['day','week'].includes(view))return;calendarPanels[view]=!calendarPanels[view];try{localStorage.setItem(calendarPreferenceKey,JSON.stringify(calendarPanels))}catch{}render()}
+function calendarPanel(){return calendarPanels[view]?'<div id="calendar-panel">'+calendar()+'</div>':''}
+function updateCalendarToggle(){const button=document.getElementById('calendar-toggle');if(!button)return;button.hidden=!['day','week'].includes(view)||workflowGlobal();button.setAttribute('aria-pressed',String(calendarPanels[view]!==false));button.setAttribute('aria-label',calendarPanels[view]?'Свернуть календарь':'Показать календарь');button.title=calendarPanels[view]?'Свернуть календарь':'Показать календарь'}
+
 const clone=Core.copy;
 const activeTask=id=>tasks.find(t=>t.id===id&&!t.isFolder&&!t.deletedAt);
 const allTask=id=>tasks.find(t=>t.id===id&&!t.isFolder);
@@ -45,12 +52,12 @@ render=function(){
  if(workflow.userId!==cloudUser?.id){resetWorkflow();workflow.userId=cloudUser?.id}
  const focused=document.activeElement,id=focused?.id,selection=['qe-title','qe-note'].includes(id)?[focused.selectionStart,focused.selectionEnd]:null;
  const openSubtasks=new Set([...document.querySelectorAll('[data-subtask-owner][open]')].map(e=>e.dataset.subtaskOwner));rememberFeedDays();renderNav();updateTaskTools();workflowControls();
- for(const id of workflow.ids)if(!allTask(id))workflow.ids.delete(id);
+ for(const id of workflow.ids)if(!allTask(id))workflow.ids.delete(id);updateCalendarToggle();
  const content=document.getElementById('content');document.getElementById('heading').textContent=({day:'Моя матрица',week:'Лента дней',inbox:'Входящие',overdue:'Хвосты',archive:'Архив'})[view]||'Моя матрица';document.getElementById('subtitle').textContent=({day:'Четыре приоритета на выбранный день',week:'Листай дни и планируй вперёд',inbox:'Запиши мысль сейчас — распредели позже',overdue:'Невыполненные задачи с прошлых дней',archive:'Выполненные и удалённые задачи'})[view]||'';
  document.getElementById('actions').innerHTML=['day','week'].includes(view)?`<div class="view-switch">${taskButton('День',"go('day')")}${taskButton('Лента',"go('week')")}</div>`:'';
  if(workflowGlobal()){const found=globalResultTasks();content.innerHTML=`<div class="section-card"><div class="result-heading"><strong>Найдено: ${found.length}</strong>${taskButton('Сбросить поиск',"workflow.query='';workflow.tag='';workflow.smart='section';render()")}</div>${found.length?found.map(t=>taskHtml(t,true)).join(''):'<p class="muted">Ничего не найдено. Попробуйте другое слово или тег.</p>'}</div>`}
- else if(view==='day')content.innerHTML=calendar()+dayHtml(selected);
- else if(view==='week'){const dates=Array.from({length:21},(_,i)=>moveDate(selected,i));content.innerHTML=`<div class="feed-controls"><strong>Ближайшие 21 день</strong><div class="actions">${taskButton('Открыть все дни','expandFeed(true)')}${taskButton('Свернуть все дни','expandFeed(false)')}</div></div>${dates.map(s=>{const count=tasks.filter(t=>!t.isFolder&&!t.deletedAt&&t.date===s&&!t.done).length;return `<details class="section-card" data-feed-day="${s}" data-default-open="${count>0}"><summary>${human(s)} <span class="small">· ${count} задач</span></summary><div style="margin-top:14px">${dayHtml(s)}</div></details>`}).join('')}`}
+ else if(view==='day')content.innerHTML=calendarPanel()+dayHtml(selected);
+ else if(view==='week'){const dates=Array.from({length:21},(_,i)=>moveDate(selected,i));content.innerHTML=calendarPanel()+`<div class="feed-controls"><strong>Ближайшие 21 день</strong><div class="actions">${taskButton('Открыть все дни','expandFeed(true)')}${taskButton('Свернуть все дни','expandFeed(false)')}</div></div>${dates.map(s=>{const count=tasks.filter(t=>!t.isFolder&&!t.deletedAt&&t.date===s&&!t.done).length;return `<details class="section-card" data-feed-day="${s}" data-default-open="${count>0}"><summary>${human(s)} <span class="small">· ${count} задач</span></summary><div style="margin-top:14px">${dayHtml(s)}</div></details>`}).join('')}`}
  else if(view==='inbox'){const list=Core.sort(tasks.filter(t=>!t.isFolder&&!t.deletedAt&&!t.date&&(!t.done||pendingCompletions.has(t.id))&&(inboxFolder==='all'||(t.folderId||'')===inboxFolder)),workflow.sort);content.innerHTML=`<div class="section-card">${folderBar()}<div class="inboxrow">${taskButton('＋ Добавить задачу',"newTask('',1)")}</div>${quickEditor&&!quickEditor.id&&!quickEditor.anchorDate?quickEditorHtml():''}${list.length?list.map(t=>taskHtml(t)).join(''):'<p class="muted">В этой папке пока нет задач.</p>'}</div>`}
  else if(view==='overdue'){const list=Core.sort(tasks.filter(t=>!t.isFolder&&!t.deletedAt&&t.date&&t.date<fmt(new Date())&&(!t.done||pendingCompletions.has(t.id))),workflow.sort==='manual'?'date':workflow.sort);content.innerHTML=`<div class="section-card">${list.length?list.map(t=>taskHtml(t,true)).join(''):'<p class="muted">Просроченных задач нет.</p>'}</div>`}
  else{const deleted=workflow.archive==='deleted';const list=tasks.filter(t=>!t.isFolder&&(deleted?!!t.deletedAt:t.done&&!t.deletedAt&&!pendingCompletions.has(t.id))).sort((a,b)=>String(deleted?b.deletedAt:b.completedAt).localeCompare(String(deleted?a.deletedAt:a.completedAt)));content.innerHTML=`<div class="archive-tabs">${taskButton('Выполненные',"workflow.archive='completed';render()")}${taskButton('Удалённые',"workflow.archive='deleted';render()")}</div><p class="small">${deleted?'Задачи можно восстановить. Автоматическое удаление отключено.':'Задачи сохраняются с датой завершения.'}</p><div class="section-card">${list.length?list.map(t=>taskHtml(t,true)).join(''):'<p class="muted">Здесь пока нет задач.</p>'}</div>`}
@@ -112,7 +119,7 @@ function bindTaskGestures(){
 }
 document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select,[contenteditable=true]'))return;if((e.metaKey||e.ctrlKey)&&!e.shiftKey&&e.key.toLowerCase()==='z'&&workflow.undo){e.preventDefault();undoWorkflow()}if(e.key==='Escape'&&!document.getElementById('authroot').children.length){if(document.getElementById('modalroot').children.length)closeModal();else if(quickEditor)quickCancel();else{workflow.selecting=false;workflow.ids.clear();render()}}});
 const originalSelectDate=selectDate;
-selectDate=function(s){workflow.query='';workflow.tag='';workflow.smart='section';originalSelectDate(s)};
+selectDate=function(s){workflow.query='';workflow.tag='';workflow.smart='section';if(view==='week'){selected=s;monthDate=new Date(parse(s).getFullYear(),parse(s).getMonth(),1);render()}else originalSelectDate(s)};
 // Resume a notification-settings detour without losing an unsaved task draft.
 const originalCloseModal=closeModal;
 closeModal=function(){originalCloseModal();detailsDraft=null;updateEditingViewport()};

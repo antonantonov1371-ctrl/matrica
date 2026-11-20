@@ -65,3 +65,5 @@
 /* Quadrant headings are plain text controls with a distinct count. */
 [data-theme] .quadhead .quad-toggle,[data-theme] .quadhead .quad-toggle:hover,[data-theme] .quadhead .quad-toggle:active{display:flex;align-items:center;justify-content:flex-start;gap:10px;width:auto;height:auto;min-height:36px;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;transform:none;color:var(--fg)}
 .quad-heading-label{min-width:0}.quad-toggle .quad-count{flex:none;margin-inline-start:2px;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+.calendar-toggle[hidden]{display:none!important}.calendar-toggle[aria-pressed="true"]{color:var(--accent,#6b9fff)}

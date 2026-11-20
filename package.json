@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "test": "node --test tests/*.test.cjs tests/*.test.mjs",
-    "check": "node --check task-core.js && node --check workflow.js && node --check push-client.js"
+    "check": "node --check task-core.js && node --check workflow.js && node --check push-client.js && node --check offline.js && node --check sw.js"
   },
-  "engines": { "node": ">=22.13.0" }
+  "engines": {
+    "node": ">=22.13.0"
+  }
 }
