@@ -1,0 +1,25 @@
+name: Native Apple build
+on:
+  push:
+    branches: [feat/native-apple-app]
+    paths: ['native/**', '.github/workflows/native-apple.yml']
+  pull_request:
+    paths: ['native/**', '.github/workflows/native-apple.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Test task preservation, merging, recurrence and reminder times
+        run: swift test --package-path native/Core
+      - name: Build native Mac app
+        run: xcodebuild -project native/Matrica.xcodeproj -scheme Matrica -configuration Debug -destination 'generic/platform=macOS' -derivedDataPath build/mac CODE_SIGNING_ALLOWED=NO build
+      - name: Build native iPhone app for Simulator
+        run: xcodebuild -project native/Matrica.xcodeproj -scheme Matrica -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath build/ios CODE_SIGNING_ALLOWED=NO build
