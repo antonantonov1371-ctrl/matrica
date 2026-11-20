@@ -1,0 +1,9 @@
+{
+  "name": "matrica",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.cjs tests/*.test.mjs",
+    "check": "node --check task-core.js && node --check workflow.js && node --check push-client.js"
+  },
+  "engines": { "node": ">=22.13.0" }
+}

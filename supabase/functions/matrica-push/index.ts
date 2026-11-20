@@ -87,7 +87,9 @@ Deno.serve(async req => {
     if(action==='status') {
       const sub=await checked(db.from('push_subscriptions').select('id').eq('endpoint',body.endpoint || '').maybeSingle());
       const pref=await checked(db.from('notification_preferences').select('time_zone').eq('user_id',user.id).maybeSingle());
-      return respond({enabled:!!sub,timeZone:pref?.time_zone || null});
+      const upcoming=await service.from('reminder_jobs').select('id',{count:'exact',head:true}).eq('user_id',user.id).is('delivered_at',null).gt('scheduled_for',new Date().toISOString());
+      if(upcoming.error) throw upcoming.error;
+      return respond({enabled:!!sub,timeZone:pref?.time_zone || null,upcoming:upcoming.count || 0});
     }
     if(action==='subscribe') {
       if(!validSubscription(body.subscription)) return respond({error:subscriptionProblem(body.subscription)},400);
@@ -111,7 +113,7 @@ Deno.serve(async req => {
       if(!updated.length) return respond({error:'Подождите 30 секунд перед повторной проверкой'},429);
       const sub=await checked(db.from('push_subscriptions').select('*').eq('endpoint',body.endpoint || '').maybeSingle());
       if(!sub) return respond({error:'Device is not subscribed'},400);
-      await webpush.sendNotification({endpoint:sub.endpoint,keys:{p256dh:sub.p256dh,auth:sub.auth}},JSON.stringify({title:'Матрица',body:'Уведомления на этом устройстве работают',tag:'matrica-test'}),{TTL:60,timeout:5000});
+      await webpush.sendNotification({endpoint:sub.endpoint,keys:{p256dh:sub.p256dh,auth:sub.auth}},JSON.stringify({title:'Матрица',body:'Проверочное напоминание. Уведомления разрешены на этом устройстве.',tag:'matrica-test'}),{TTL:300,urgency:'high',timeout:5000});
       return respond({sent:true});
     }
     return respond({error:'Unknown action'},404);
