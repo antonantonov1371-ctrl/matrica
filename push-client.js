@@ -1,5 +1,5 @@
 'use strict';
-var taskPushState={ready:false,enabled:false,publicKey:null,timeZone:null,error:'',busy:false,checked:false};
+var taskPushState={ready:false,enabled:false,publicKey:null,timeZone:null,error:'',busy:false,checked:false,upcoming:null};
 var taskPushRegistration=null;
 function pushIOSNeedsInstall(){
   const ios=/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
@@ -38,6 +38,7 @@ async function initTaskPush(){
         const status=await taskPushRequest('status',{endpoint:sub.endpoint});
         taskPushState.enabled=status.enabled && Notification.permission==='granted';
         taskPushState.timeZone=status.timeZone;
+        taskPushState.upcoming=Number.isInteger(status.upcoming)?status.upcoming:null;
       }
     }
   } catch(error) {taskPushState.ready=false;taskPushState.error=error.message;}
@@ -64,8 +65,10 @@ function renderTaskPushSettings(){
     ${!supported&&!needsInstall?'<p class="small">Этот браузер не поддерживает уведомления. Откройте «Матрицу» в Safari, Chrome или другом браузере с поддержкой Web Push.</p>':''}
     ${denied?'<p class="small">Уведомления запрещены. Разрешите их в настройках браузера или устройства, затем вернитесь сюда.</p>':''}
     <p class="small">Часовой пояс напоминаний: ${esc(zone)}. Для доставки нужен интернет.</p>
+    ${taskPushState.enabled&&taskPushState.upcoming!==null?`<p class="small">На сервере запланировано напоминаний: ${taskPushState.upcoming}.</p>`:''}
+    <p class="small">Если разрешения уже выданы, а баннер не виден, проверьте уведомления «Матрицы» и режим фокусирования в настройках iPhone.</p>
     <div class="actions">${taskPushState.enabled?`<button class="btn" onclick="testTaskPush()" ${taskPushState.busy?'disabled':''}>Проверить уведомление</button><button class="btn" onclick="disableTaskPush()" ${taskPushState.busy?'disabled':''}>Выключить на устройстве</button>`:`<button class="btn primary" onclick="enableTaskPush()" ${!taskPushState.ready||!supported||needsInstall||denied||taskPushState.busy?'disabled':''}>Включить уведомления</button>`}</div>
-    <div class="modalactions"><div></div><button class="btn" onclick="closeModal()">Готово</button></div>`;
+    <div class="modalactions"><div></div><button class="btn" onclick="${typeof suspendedTaskDraft!=='undefined'&&suspendedTaskDraft?'resumeTaskDraft()':'closeModal()'}">${typeof suspendedTaskDraft!=='undefined'&&suspendedTaskDraft?'Вернуться к задаче':'Готово'}</button></div>`;
 }
 function vapidBytes(value){const raw=atob(value.replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(raw,c=>c.charCodeAt(0));}
 async function enableTaskPush(){
@@ -101,7 +104,7 @@ async function testTaskPush(){
   try {
     const reg=await registerTaskPush(),sub=await reg.pushManager.getSubscription();
     if(!sub)throw new Error('Сначала включите уведомления');
-    await taskPushRequest('test',{endpoint:sub.endpoint});toast('Проверочное уведомление отправлено');
+    await taskPushRequest('test',{endpoint:sub.endpoint});toast('Проверочное уведомление передано службе доставки');
   }catch(error){taskPushState.error=error.message;}
   finally{taskPushState.busy=false;renderTaskPushSettings();}
 }
@@ -112,6 +115,7 @@ function taskPushSignedOut(){
 async function openReminderTask(id){
   if(!cloudUser || typeof id!=='string')return;
   const task=tasks.find(t=>t.id===id&&!t.isFolder);if(!task)return;
+  if(task.deletedAt){go('archive');if(typeof workflow!=='undefined'){workflow.archive='deleted';render()}return;}
   if(task.done)go('archive');else if(task.date)selectDate(task.date);else go('inbox');
 }
 function openPendingReminder(){

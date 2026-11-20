@@ -1,0 +1,63 @@
+.workflow-controls{margin:0 0 20px;display:grid;gap:10px;min-width:0}
+.workflow-search{display:flex;align-items:center;gap:9px;min-width:0}
+.workflow-search input{width:100%;min-width:0;border:1px solid #363b48;border-radius:18px;padding:12px 15px;background:#ffffff07;color:inherit;font-size:16px}
+.workflow-search .btn{flex:none;min-height:44px}
+.workflow-filters{font-size:13px;color:#a0aabc}
+.workflow-filters>summary{cursor:pointer;padding:6px 0;width:fit-content}
+.workflow-options{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0;min-width:0}
+.workflow-options>label{display:grid;gap:6px;flex:1 1 120px;min-width:0}
+.workflow-options select,.workflow-options input{border:1px solid #363b48;background:#20252f;color:inherit;padding:10px;border-radius:12px;max-width:100%;min-width:0}
+.tag-browser,.task-badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag-browser{margin-top:10px}
+.tag-chip{border:1px solid #5784cc55;border-radius:12px;background:#5784cc12;color:#8db7ff;font-size:12px;padding:3px 8px;overflow-wrap:anywhere}
+.tag-chip.selected{background:#356deb;color:white}
+.batch-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px;border:1px solid #5883cd55;border-radius:16px;background:#5681cc12}
+.batch-selected{outline:2px solid #78a5ff}
+.workflow-task{position:relative;touch-action:pan-y;transition:background .15s;flex-wrap:wrap;min-width:0}
+.workflow-task .taskbody{flex:1 1 100px;overflow-wrap:anywhere}
+.workflow-task .task-badges:empty{display:none}
+.workflow-task .task-badges{color:#9ba9be;font-size:12px;margin-top:6px;line-height:1.6}
+.workflow-task .flag-badge{color:#efb259;font-size:17px}
+.task-context{color:#8b98ad;font-size:12px;line-height:1.5;margin-top:4px}
+.task-link{display:block;color:#8db7ff;font-size:13px;margin-top:6px}
+.task-subtasks{margin-top:8px;font-size:13px}
+.task-subtasks>summary{cursor:pointer;color:#9cabbe;padding:6px 0}
+.subtask-row{display:flex;align-items:flex-start;gap:9px;line-height:1.5;margin:7px 0;min-width:0;overflow-wrap:anywhere;font-size:14px}
+.subtask-row input[type=checkbox]{flex:none;accent-color:#4b83f5;width:20px;height:20px;margin:0}
+.subtask-row .done{text-decoration:line-through;opacity:.6}
+.subtask-editor{border:1px solid #38404e;border-radius:14px;padding:10px;margin:15px 0;min-width:0}
+.subtask-draft{display:flex;gap:8px;align-items:center;margin:8px 0;min-width:0}
+.subtask-draft>input:not([type=checkbox]){flex:1;min-width:0;width:100%;border:1px solid #38404e;border-radius:9px;padding:8px;background:transparent;color:inherit}
+.subtask-draft>input[type=checkbox]{width:20px;height:20px;flex:none}
+.subtask-draft .btn{padding:6px 11px}
+.quadhead .quad-toggle{font-size:inherit;font-weight:inherit;line-height:1.4;text-align:left;padding:4px 0;flex:1;min-width:0}
+.quad-collapsed{min-height:0}
+.quad-collapsed .quadhead{margin:0}
+.day-completed{margin-top:16px;font-size:13px;color:#9ba9be}
+.task-actions{display:grid;gap:10px}
+.task-actions .btn{text-align:left;min-height:44px}
+.task-actions h2{overflow-wrap:anywhere}
+.swipe-actions:not([hidden]){display:flex;flex-basis:100%;gap:6px;justify-content:flex-end;flex-wrap:wrap;padding-top:7px}
+.task-swiping{z-index:1;outline:1px solid #5883cd88}
+.task-drop{outline:2px dashed #78a5ff;outline-offset:2px}
+.result-heading,.archive-tabs{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.modal #task-form-error{color:#f59aa4}
+.toast{max-width:calc(100vw - 28px);white-space:normal;text-align:center}
+[data-theme=light] .workflow-search input{background:white;border-color:#dce3ee}
+[data-theme=light] .workflow-filters,[data-theme=light] .task-context,[data-theme=light] .task-subtasks>summary{color:#66758b}
+[data-theme=light] .workflow-options select,[data-theme=light] .workflow-options input{background:white;border-color:#dce3ee;color:#273043}
+[data-theme=light] .tag-chip{color:#285ed3;background:#edf3ff}
+[data-theme=light] .tag-chip.selected{background:#356deb;color:white}
+[data-theme=light] .task-badges{color:#66758b}
+[data-theme=light] .subtask-editor,[data-theme=light] .subtask-draft>input:not([type=checkbox]){border-color:#dce3ee}
+@media(max-width:850px){
+ .workflow-controls input,.workflow-controls select,.subtask-draft>input:not([type=checkbox]){font-size:16px}
+ .workflow-task .taskmenu{min-width:32px;min-height:32px}
+ .workflow-options{gap:9px}
+ .workflow-options>label{flex-basis:130px}
+ .batch-tools .btn{min-height:40px}
+ .task-subtasks{font-size:14px}
+ .workflow-task .drag-handle{min-width:22px;min-height:26px}
+ .workflow-task .taskbody{flex-basis:80px}
+ body.input-focused .main{padding-bottom:30px}
+}
