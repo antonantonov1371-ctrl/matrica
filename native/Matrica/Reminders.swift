@@ -31,24 +31,28 @@ import Combine
     private func apply(_ tasks: [TaskRecord], userID: String?, timeZone: String) async {
         await checkPermission()
         let old = await center.pendingNotificationRequests()
-        center.removePendingNotificationRequests(withIdentifiers: old.filter { $0.identifier.hasPrefix("matrica.") }.map(\.identifier))
-        scheduled = 0; total = 0; error = ""
-        guard let userID, permission == .authorized || permission == .provisional else { return }
-        let zone = TimeZone(identifier: timeZone) ?? .current
-        let upcoming = tasks.compactMap { task -> (TaskRecord, Date)? in guard task.userID == userID, let when = DateTools.reminder(task, zone: zone), when > Date() else { return nil }; return (task, when) }.sorted { $0.1 < $1.1 }
-        total = upcoming.count
-        // Keep below the platform's pending-request budget; refill whenever the app opens/syncs.
-        for (task, when) in upcoming.prefix(60) {
-            var cal = Calendar(identifier: .gregorian); cal.timeZone = zone
-            var components = cal.dateComponents([.year, .month, .day, .hour, .minute], from: when); components.timeZone = zone
-            let content = UNMutableNotificationContent(); content.title = task.title; content.body = task.note.isEmpty ? "Пора выполнить задачу" : task.note; content.sound = .default; content.userInfo = ["taskId": task.id]
-            let id = "matrica.\(userID).\(task.id)"
-            do {
-                try await center.add(UNNotificationRequest(identifier: id, content: content, trigger: UNCalendarNotificationTrigger(dateMatching: components, repeats: false)))
-                scheduled += 1
-            } catch { self.error = error.localizedDescription }
+        guard let userID, permission == .authorized || permission == .provisional else {
+            center.removePendingNotificationRequests(withIdentifiers: old.filter { $0.identifier.hasPrefix("matrica.") && $0.identifier != "matrica.test" }.map(\.identifier))
+            scheduled = 0; total = 0; return
+        }
+        let existing = old.map { request -> ReminderSpec in
+            let trigger = request.trigger as? UNCalendarNotificationTrigger
+            let components = trigger?.dateComponents ?? DateComponents()
+            var calendar = Calendar(identifier: .gregorian); calendar.timeZone = components.timeZone ?? .current
+            return ReminderSpec(id: request.identifier, taskID: request.content.userInfo["taskId"] as? String ?? "", title: request.content.title, body: request.content.body, when: calendar.date(from: components) ?? .distantPast, timeZone: calendar.timeZone.identifier)
+        }
+        let plan = ReminderPlan.make(tasks: tasks, userID: userID, timeZone: timeZone, existing: existing)
+        center.removePendingNotificationRequests(withIdentifiers: plan.cancel)
+        scheduled = plan.scheduled; total = plan.total; error = ""
+        for spec in plan.add {
+            var cal = Calendar(identifier: .gregorian); cal.timeZone = TimeZone(identifier: spec.timeZone) ?? .current
+            var components = cal.dateComponents([.year, .month, .day, .hour, .minute], from: spec.when); components.timeZone = cal.timeZone
+            let content = UNMutableNotificationContent(); content.title = spec.title; content.body = spec.body; content.sound = .default; content.userInfo = ["taskId": spec.taskID]
+            do { try await center.add(UNNotificationRequest(identifier: spec.id, content: content, trigger: UNCalendarNotificationTrigger(dateMatching: components, repeats: false))) }
+            catch { self.error = error.localizedDescription; scheduled -= 1 }
         }
     }
+
     func test() async {
         let content = UNMutableNotificationContent(); content.title = "Матрица"; content.body = "Проверка системного напоминания. Интернет не нужен."; content.sound = .default
         do { try await center.add(UNNotificationRequest(identifier: "matrica.test", content: content, trigger: UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false))); error = "" } catch { self.error = error.localizedDescription }

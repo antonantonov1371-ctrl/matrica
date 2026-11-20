@@ -37,7 +37,7 @@ struct LocalSnapshot: Codable { var tasks: [TaskRecord] = []; var baseline: [Tas
     private func load(_ id: String) throws -> LocalSnapshot {
         let file = try url(id); guard FileManager.default.fileExists(atPath: file.path) else { return LocalSnapshot() }
         let state = try JSONDecoder().decode(LocalSnapshot.self, from: Data(contentsOf: file))
-        guard (state.tasks + state.baseline).allSatisfy({ $0.userID == id }) else { throw CloudError.message("Не совпадает владелец локальных данных") }
+        guard Set(state.tasks.map(\.id)).count == state.tasks.count, Set(state.baseline.map(\.id)).count == state.baseline.count, (state.tasks + state.baseline).allSatisfy({ $0.userID == id }) else { throw CloudError.message("Не совпадает владелец локальных данных") }
         return state
     }
     private func persist(_ state: LocalSnapshot, user: String) throws {
@@ -78,7 +78,7 @@ struct LocalSnapshot: Codable { var tasks: [TaskRecord] = []; var baseline: [Tas
         if commit(state) { queueSync() }
     }
     func move(_ id: String, date: String, quadrant: Int) { guard var t = tasks.first(where: { $0.id == id && !$0.isFolder && !$0.deleted }) else { return }; let original = t; t.date = date; t.quadrant = quadrant; save(t, original: original) }
-    func duplicate(_ id: String) { guard var t = tasks.first(where: { $0.id == id }) else { return }; t.fields["id"] = .string(UUID().uuidString.lowercased()); t.done = false; t.completedAt = ""; t.setMeta("nextOccurrenceId", nil); t.setMeta("seriesId", nil); t.setMeta("generatedFrom", nil); t.subtasks = t.subtasks.map { var s = $0.object; s["id"] = .string(UUID().uuidString.lowercased()); s["done"] = .bool(false); return .object(s) }; save(t, original: nil) }
+    func duplicate(_ id: String) { guard var t = tasks.first(where: { $0.id == id }) else { return }; t.fields["id"] = .string(UUID().uuidString.lowercased()); t.fields["created_at"] = .string(ISO8601DateFormatter().string(from: Date())); t.done = false; t.completedAt = ""; t.setMeta("nextOccurrenceId", nil); t.setMeta("seriesId", nil); t.setMeta("generatedFrom", nil); t.subtasks = t.subtasks.map { var s = $0.object; s["id"] = .string(UUID().uuidString.lowercased()); s["done"] = .bool(false); return .object(s) }; save(t, original: nil) }
     func trash(_ id: String) { guard var t = tasks.first(where: { $0.id == id }) else { return }; let original = t; t.trash(); completionJobs[id]?.cancel(); pendingCompletion.remove(id); save(t, original: original) }
     func restore(_ id: String) { guard var t = tasks.first(where: { $0.id == id }) else { return }; let original = t; if t.deleted { t.restore() } else { t.done = false; t.completedAt = "" }; save(t, original: original) }
     func toggle(_ id: String) {

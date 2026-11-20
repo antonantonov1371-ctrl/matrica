@@ -62,12 +62,12 @@ enum CloudAPI {
         var session = try JSONDecoder().decode(CloudSession.self, from: data); session.anchorExpiry(); return session
     }
     static func tasks(_ session: CloudSession) async throws -> [TaskRecord] {
-        var out: [TaskRecord] = [], offset = 0
+        var out: [String: TaskRecord] = [:], offset = 0
         while true {
             let data = try await request("/rest/v1/tasks?user_id=eq.\(session.user.id)&select=*&order=id.asc&limit=500&offset=\(offset)", token: session.access_token)
             let page = try JSONDecoder().decode([TaskRecord].self, from: data)
             guard page.allSatisfy({ $0.userID == session.user.id && UUID(uuidString: $0.id) != nil }) else { throw CloudError.message("Не удалось проверить владельца задач") }
-            out += page; if page.count < 500 { return out }; offset += page.count
+            for row in page { out[row.id] = row }; if page.count < 500 { return out.values.sorted { $0.id < $1.id } }; offset += page.count
         }
     }
     static func save(_ tasks: [TaskRecord], session: CloudSession, generated: Bool = false) async throws -> [TaskRecord] {

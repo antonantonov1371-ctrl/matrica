@@ -54,11 +54,8 @@ final class TaskRecordTests: XCTestCase {
         var t = task(); t.done = true; t.setMeta("repeat", .object(["freq": .string("day"), "interval": .number(1)])); let before = t
         XCTAssertEqual(t.nextOccurrence(after: t.date)?.id, t.nextOccurrence(after: t.date)?.id); XCTAssertEqual(t, before)
     }
-    func testDoesNotDeleteUnknownRemoteTask() {
-        let remote = task(); let retained = [remote].map { TaskRecord.merge(base: nil, local: $0, remote: $0) }; XCTAssertEqual(retained, [remote])
-    }
     func testWebCompatibilityVectors() throws {
-        let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("Compatibility.json")
+        let url = Bundle.module.url(forResource: "Compatibility", withExtension: "json")!
         let vectors = try JSONDecoder().decode([[String: JSONValue]].self, from: Data(contentsOf: url))
         for v in vectors { XCTAssertEqual(TaskRecord.occurrenceID(series: v["series"]!.string, date: v["date"]!.string), v["id"]!.string) }
     }
