@@ -8,9 +8,9 @@ const app=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const source=[...app.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(m=>m[1]).find(s=>s.includes("const KEY='matrica.tasks.v1'"));
 const workflow=fs.readFileSync(path.join(__dirname,'../workflow.js'),'utf8').replace('bindTaskGestures();','').replace('render();cloudInit();','');
 function harness(){const elements=new Map(),timers=new Map(),data=new Map();let timerId=0;
- const element=id=>{if(!elements.has(id))elements.set(id,{id,innerHTML:'',textContent:'',value:'',checked:false,children:[],classList:{add(){},remove(){},toggle(){}},style:{setProperty(){}},setAttribute(){},addEventListener(){},remove(){},matches(){return false},focus(){},querySelectorAll(){return[]}});return elements.get(id)};
- const document={getElementById:element,querySelector(){return null},querySelectorAll(){return[]},addEventListener(){},activeElement:element('body'),documentElement:{dataset:{theme:'dark'},style:{setProperty(){}}},body:{classList:{toggle(){}}},visibilityState:'visible'};
- const ctx={console,Date,Intl,Math,JSON,Map,Set,URL,crypto:require('node:crypto').webcrypto,MatricaCore:C,document,location:{href:'https://example.test'},navigator:{},localStorage:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)},setTimeout(fn){timers.set(++timerId,fn);return timerId},clearTimeout:id=>timers.delete(id),setInterval(){},requestAnimationFrame(fn){fn()},taskPushState:{enabled:false,timeZone:'Europe/Moscow'},taskPushSignedOut(){},initTaskPush:async()=>{},openNotificationSettings(){},window:{addEventListener(){},innerHeight:852},history:{}};
+ const element=id=>{if(!elements.has(id))elements.set(id,{id,innerHTML:'',textContent:'',value:'',checked:false,children:[],classList:{add(){},remove(){},toggle(){}},style:{setProperty(){}},before(){},setAttribute(){},addEventListener(){},remove(){},matches(){return false},focus(){},querySelectorAll(){return[]}});return elements.get(id)};
+ const document={createElement:()=>element("new-button"),baseURI:"https://example.test/",getElementById:element,querySelector(){return null},querySelectorAll(){return[]},addEventListener(){},activeElement:element('body'),documentElement:{dataset:{theme:'dark'},style:{setProperty(){}}},body:{classList:{toggle(){}}},visibilityState:'visible'};
+ const ctx={console,Date,Intl,Math,JSON,Map,Set,URL,crypto:require('node:crypto').webcrypto,MatricaCore:C,document,location:{href:'https://example.test'},navigator:{},localStorage:{getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)},setTimeout(fn){timers.set(++timerId,fn);return timerId},clearTimeout:id=>timers.delete(id),setInterval(){},requestAnimationFrame(fn){fn()},taskPushState:{enabled:false,timeZone:'Europe/Moscow'},taskPushSignedOut(){},initTaskPush:async()=>{},openNotificationSettings(){},window:{addEventListener(){},innerHeight:852},history:{}};
  vm.createContext(ctx);vm.runInContext(source,ctx);vm.runInContext(workflow,ctx);vm.runInContext("cloudUser={id:'test-user'};render=function(){};save=function(){};closeModal=function(){};toast=function(){}",ctx);
  return {ctx,element,data,run:s=>vm.runInContext(s,ctx),json:s=>JSON.parse(vm.runInContext('JSON.stringify('+s+')',ctx)),timers,async flushTimers(){const callbacks=[...timers.values()];timers.clear();for(const fn of callbacks)await fn()}};
 }
@@ -31,6 +31,45 @@ function gestures(){const h=harness(),contentHandlers={},docHandlers={},panel={h
 test('touch swipe right completes, left reveals actions, vertical scroll does neither',()=>{const right=gestures();right.begin();right.move(190);right.end(190);assert.equal(right.run('gestureComplete'),'a');const left=gestures();left.begin();left.move(10);left.end(10);assert.equal(left.panel.hidden,false);const vertical=gestures();vertical.begin();vertical.move(110,180);vertical.end(110,180);assert.equal(vertical.panel.hidden,true);assert.equal(vertical.run('gestureComplete'),null)});
 test('long press opens menu, cancellation leaves task unchanged',async()=>{const hold=gestures();hold.begin();await hold.flushTimers();assert.equal(hold.run('gestureMenu'),'a');hold.end(100);const cancel=gestures();cancel.begin();cancel.move(180);cancel.end(180,100,'pointercancel');assert.equal(cancel.run('gestureComplete'),null)});
 function freezeClock(h,iso){const fixed=Date.parse(iso);h.ctx.Date=class extends Date{constructor(...args){super(...(args.length?args:[fixed]))}static now(){return fixed}}}
+const offlineSource=fs.readFileSync(path.join(__dirname,'../offline.js'),'utf8');
+function offlineHarness(){const h=harness();h.run(offlineSource);return h}
+test('offline edits survive restarting the application without making requests',async()=>{
+ const h=offlineHarness();h.ctx.navigator.onLine=false;
+ h.run('tasks='+JSON.stringify([task()])+';cloudUser={id:"test-user",email:"anton@example.test"};rememberOfflineAccount(cloudUser);tasks[0].title="Без сети"');
+ await h.run('cloudSave()');h.run('tasks=[];cloudUser=null;cloudSnapshot.clear()');
+ assert.equal(h.run('restoreOfflineAccount()'),true);assert.equal(h.json('tasks')[0].title,'Без сети');
+ assert.match(h.element('cloudstatus').textContent,/сохранены на устройстве/);
+});
+test('reconnection fetches and merges remote edits before uploading offline edits',async()=>{
+ const h=offlineHarness(),base=task(),calls=[];h.ctx.calls=calls;h.ctx.remote=[C.encode({...base,note:'iPhone'},'test-user')];
+ h.run('tasks='+JSON.stringify([{...base,title:'Offline Mac'}])+';cloudSnapshot=new Map([["a",'+JSON.stringify(JSON.stringify(C.encode(base,'test-user')))+']]);db={from(){return {select(){calls.push("read");return {eq(){return {order:async()=>({data:remote,error:null})}}}},upsert:async(rows)=>{calls.push("write");return {}}}}};');
+ await h.run('cloudSave()');assert.deepEqual(calls,['read','write']);assert.equal(h.json('tasks')[0].title,'Offline Mac');assert.equal(h.json('tasks')[0].note,'iPhone');
+});
+test('failed reconnect keeps offline edits and the original merge baseline',async()=>{
+ const h=offlineHarness();h.run('tasks='+JSON.stringify([task()])+';db={from(){return {select(){return {eq(){return {order:async()=>({error:new Error("network down")})}}}}}}};');
+ await assert.rejects(h.run('cloudSave()'),/network down/);assert.equal(h.json('tasks')[0].note,'Детали');assert.equal(h.run('rebaseNeeded'),true);
+ assert.equal(JSON.parse(h.data.get('matrica.pending.v2.test-user')).tasks.length,1);
+});
+test('offline first launch explains that the first sign-in requires internet',async()=>{
+ const h=offlineHarness();h.ctx.navigator.onLine=false;h.ctx.window.supabase={createClient(){return {auth:{onAuthStateChange(){}}}}};h.run('cloudUser=null');
+ await h.run('cloudInit()');assert.match(h.element('authroot').innerHTML,/Для первого входа нужен интернет/);assert.equal(h.run('cloudUser'),null);
+});
+test('local copy is never restored without a remembered signed-in account',()=>{
+ const h=offlineHarness();h.data.set('matrica.pending.v2.test-user',JSON.stringify({tasks:[task()],snapshot:[]}));assert.equal(h.run('restoreOfflineAccount()'),false);
+});
+test('day and week calendars collapse independently and retain selected date',()=>{
+ const h=harness();h.run('selected="2026-11-20";view="day";toggleCalendar()');assert.equal(h.run('calendarPanel()'),'');assert.equal(h.run('selected'),'2026-11-20');
+ h.run('view="week"');assert.match(h.run('calendarPanel()'),/cal-grid/);h.run('toggleCalendar()');assert.equal(h.run('calendarPanel()'),'');
+ assert.deepEqual(JSON.parse(h.data.get('matrica.calendar-panels.v1')),{day:false,week:false});h.run('view="day";toggleCalendar()');assert.match(h.run('calendarPanel()'),/cal-grid/);
+});
+test('choosing a calendar date in week keeps the feed open',()=>{
+ const h=harness();h.run('view="week";selectDate("2026-12-15")');assert.equal(h.run('view'),'week');assert.equal(h.run('selected'),'2026-12-15');assert.equal(h.run('monthDate.getMonth()'),11);
+});
+test('explicit offline sign out closes local account access without deleting pending edits',async()=>{
+ const h=offlineHarness();h.ctx.navigator.onLine=false;h.ctx.confirm=()=>true;
+ h.run('tasks='+JSON.stringify([task()])+';rememberOfflineAccount(cloudUser);db={auth:{signOut:async()=>({})}}');
+ await h.run('cloudSignOut()');assert.equal(h.run('cloudUser'),null);assert.equal(h.run('restoreOfflineAccount()'),false);assert.equal(JSON.parse(h.data.get('matrica.pending.v2.test-user')).tasks.length,1);
+});
 test('15, 30 and 60 minute reminders cross midnight in the account timezone without losing task fields',()=>{for(const [minutes,time] of [[15,'00:00'],[30,'00:15'],[60,'00:45']]){const h=harness(),original={...task(),flagged:true,repeat:{freq:'day',interval:1}};h.run('tasks='+JSON.stringify([original]));freezeClock(h,'2026-11-20T20:45:00Z');h.run(`snoozeTask('a',${minutes})`);const changed=h.json('tasks')[0];assert.equal(changed.date,'2026-11-21');assert.equal(changed.time,time);assert.deepEqual(changed.tags,original.tags);assert.deepEqual(changed.subtasks,original.subtasks);assert.deepEqual(changed.repeat,original.repeat);assert.equal(changed.flagged,true);assert.equal(changed.note,original.note)}});
 test('tomorrow at 09:00 uses the account calendar day, including a year boundary',()=>{const h=harness();h.run('tasks='+JSON.stringify([task()]));freezeClock(h,'2026-12-31T22:30:00Z');h.run("snoozeTomorrow('a')");const changed=h.json('tasks')[0];assert.equal(changed.date,'2027-01-02');assert.equal(changed.time,'09:00');assert.equal(changed.id,'a')});
 test('quick transfer only changes date, folder and quadrant',()=>{const h=harness(),original={...task(),flagged:true,repeat:{freq:'month',interval:2}};h.run('tasks='+JSON.stringify([original]));h.element('move-date').value='2026-12-25';h.element('move-folder').value='office';h.element('move-cat').value='3';h.run("applyTaskMove({preventDefault(){}},'a')");assert.deepEqual(h.json('tasks')[0],{...original,date:'2026-12-25',folderId:'office',cat:3})});
