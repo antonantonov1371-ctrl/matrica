@@ -13,7 +13,7 @@ function worker(){
 }
 test('installed shell and all local dependencies load with the network disconnected',async()=>{
  const w=worker();await w.event('install');
- for(const [url,mode] of [['index.html?task=a','navigate'],['workflow.js?v=20261120-app','cors'],['offline.js?v=20261120-offline2','cors'],['vendor/supabase-2.49.8.js','cors']])assert.equal((await w.fetch('https://example.test/matrica/'+url,mode)).status,200);
+ for(const [url,mode] of [['index.html?task=a','navigate'],['workflow.js?v=20261123-lists','cors'],['offline.js?v=20261123-lists','cors'],['vendor/supabase-2.49.8.js','cors'],['navigation.js?v=20261123-lists','cors']])assert.equal((await w.fetch('https://example.test/matrica/'+url,mode)).status,200);
  assert.deepEqual(w.calls,['activate']);
 });
 test('worker never intercepts account API requests or POST requests',async()=>{
