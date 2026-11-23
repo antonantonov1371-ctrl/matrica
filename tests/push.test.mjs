@@ -61,5 +61,5 @@ test('notification click opens the scoped app when it is closed',async()=>{
   const w=await workerHarness();w.self.clients.matchAll=async()=>[];let pending;
   w.handlers.notificationclick({notification:{data:{taskId:'task'},close(){}},waitUntil:p=>pending=p});
   await pending;
-  assert.equal(w.opened,'https://example.test/matrica/index.html?task=task');
+  assert.equal(w.opened,'https://example.test/matrica/?task=task');
 });

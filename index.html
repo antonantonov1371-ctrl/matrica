@@ -124,11 +124,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
  .addline{font-size:14px;min-height:44px}
  .dayhead h2{font-size:19px}
 }
-.folder-chip{touch-action:none;-webkit-touch-callout:none;user-select:none}.folder-chip.folder-held{transform:scale(1.06);outline:2px solid #6b9fff}.folder-chip.folder-drop{outline:2px dashed #6b9fff;outline-offset:3px}.folder-menu{display:grid;gap:10px}.folder-menu .btn{text-align:left;min-height:44px}@media(hover:hover) and (pointer:fine){.folder-chip[data-folder-id]:not([data-folder-id=""]){cursor:grab}.folder-chip.folder-held{cursor:grabbing}}</style><link rel="stylesheet" href="./workflow.css?v=20261120-app"></head><body><div class="app"><aside class="sidebar"><div class="brand">◩ Матрица<span>.</span></div><nav class="nav" id="nav"></nav><div class="side-title">Месяцы</div><div class="months" id="months"></div><div class="side-title">Облако</div><div id="cloudstatus" class="small" style="padding:0 10px;line-height:1.6">Подключение...</div><div style="padding:10px"><button class="btn" id="signout" style="display:none" onclick="cloudSignOut()">Выйти</button></div></aside><main class="main"><div class="top"><div><h1 id="heading">Моя матрица</h1><div class="subtitle" id="subtitle">Планируй важное, а не только срочное</div></div><div class="toptools"><div class="actions" id="actions"></div><button type="button" class="btn theme-toggle push-toggle" id="push-toggle" onclick="openNotificationSettings()" aria-label="Настроить уведомления" title="Настроить уведомления"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></button><button type="button" class="btn theme-toggle calendar-toggle" id="calendar-toggle" onclick="toggleCalendar()" aria-label="Свернуть календарь" aria-pressed="true" aria-controls="calendar-panel"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M16 3v4M8 3v4M3 11h18M8 15h2M14 15h2"/></svg></button><button type="button" class="btn theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Включить светлую тему">☀ Светлая</button></div></div><div id="tasktools"></div><div id="content"></div><div class="footer">Матрица · Облачная версия · Supabase</div></main></div><div class="composebar"><button type="button" class="compose-action" onclick="newTask(view==='inbox'?'':selected,0)"><span class="compose-plus" aria-hidden="true">+</span><span>Записать задачу</span></button></div><nav class="mobilebar" id="mobilebar"></nav><div id="modalroot"></div><div id="authroot"></div><div id="toast" class="toast"></div><script src="./vendor/supabase-2.49.8.js"></script><script src="./push-client.js?v=20261119"></script><script>
+.folder-chip{touch-action:none;-webkit-touch-callout:none;user-select:none}.folder-chip.folder-held{transform:scale(1.06);outline:2px solid #6b9fff}.folder-chip.folder-drop{outline:2px dashed #6b9fff;outline-offset:3px}.folder-menu{display:grid;gap:10px}.folder-menu .btn{text-align:left;min-height:44px}@media(hover:hover) and (pointer:fine){.folder-chip[data-folder-id]:not([data-folder-id=""]){cursor:grab}.folder-chip.folder-held{cursor:grabbing}}</style><link rel="stylesheet" href="./workflow.css?v=20261123"></head><body><div class="app"><aside class="sidebar"><div class="brand">◩ Матрица<span>.</span></div><nav class="nav" id="nav"></nav><div class="side-title">Воронки</div><div class="months" id="funnels"></div><div class="side-title">Месяцы</div><div class="months" id="months"></div><div class="side-title">Облако</div><div id="cloudstatus" class="small" role="status" style="padding:0 10px;line-height:1.6">Подключение...</div><div style="padding:10px"><button class="btn" id="signout" style="display:none" onclick="cloudSignOut()">Выйти</button></div></aside><main class="main"><div class="top"><div><h1 id="heading">Моя матрица</h1><div class="subtitle" id="subtitle">Планируй важное, а не только срочное</div></div><div class="toptools"><button type="button" class="btn planner-mobile" onclick="openPlannerLists()">Списки</button><div class="actions" id="actions"></div><button type="button" class="btn theme-toggle push-toggle" id="push-toggle" onclick="openNotificationSettings()" aria-label="Настроить уведомления" title="Настроить уведомления"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></button><button type="button" class="btn theme-toggle calendar-toggle" id="calendar-toggle" onclick="toggleCalendar()" aria-label="Свернуть календарь" aria-pressed="true" aria-controls="calendar-panel"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M16 3v4M8 3v4M3 11h18M8 15h2M14 15h2"/></svg></button><button type="button" class="btn theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Включить светлую тему">☀ Светлая</button></div></div><div id="tasktools"></div><div id="content"></div><div id="mobile-cloudstatus" class="planner-mobile small" role="status">Подключение…</div><div class="footer">Матрица · Облачная версия · Supabase</div></main></div><div class="composebar"><button type="button" class="compose-action" onclick="newTask(['inbox','funnel'].includes(view)?'':selected,0)"><span class="compose-plus" aria-hidden="true">+</span><span>Записать задачу</span></button></div><nav class="mobilebar" id="mobilebar"></nav><div id="modalroot"></div><div id="authroot"></div><div id="toast" class="toast"></div><script src="./vendor/supabase-2.49.8.js"></script><script src="./push-client.js?v=20261123"></script><script>
 'use strict';
 function uiIcon(name){const paths={day:'<path d="M3 10.5 12 3l9 7.5M5.5 9v11h5v-6h3v6h5V9"/>',week:'<rect x="3" y="5" width="18" height="16" rx="4"/><path d="M7 3v4m10-4v4M3 10h18M7 14h3m4 0h3m-10 4h3"/>',inbox:'<path d="m4 4-2 10v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5L20 4H4Z"/><path d="M2 14h6l2 3h4l2-3h6"/>',overdue:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',archive:'<rect x="3" y="4" width="18" height="4" rx="1.5"/><path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8M9 12h6m-6 4 2 2 4-4"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',moon:'<path d="M20.5 14A9 9 0 0 1 10 3.5 9 9 0 1 0 20.5 14Z"/>',plus:'<path d="M12 5v14M5 12h14"/>',folder:'<path d="M3 8V6a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z"/>',expand:'<path d="m8 3 4 4 4-4M8 21l4-4 4 4M4 12h16"/>',collapse:'<path d="m8 7 4-4 4 4M8 17l4 4 4-4M4 12h16"/>'};return '<svg class="ui-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[name]||paths.plus)+'</svg>'}
-const KEY='matrica.tasks.v1';const cats=[{label:'Срочно и важно',hint:"Нельзя откладывать: срок уже близко, а последствия важны. Например, оплатить счёт в последний день.",bg:'#2b1e24',fg:'#f59aa4',border:'#513039'},{label:'Важно, не срочно',hint:"Важно для вас, но время ещё есть. Например, заранее подготовиться к экзамену.",bg:'#172b26',fg:'#80d9b1',border:'#294d40'},{label:'Срочно, не важно',hint:"Нужно сделать скоро, но на ваши цели это почти не влияет. Например, подтвердить время доставки.",bg:'#2c271b',fg:'#e7c779',border:'#4d432b'},{label:'Не срочно, не важно',hint:"Необязательно и без спешки. Например, посмотреть случайные видео в интернете.",bg:'#202735',fg:'#a0b6de',border:'#364258'}];const months=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];const weekdays=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];const today=new Date();const pad=n=>String(n).padStart(2,'0');const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;const parse=s=>new Date(s+'T12:00:00');const human=s=>{const d=parse(s);return `${weekdays[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`};const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));let tasks=[];let view='day',selected=fmt(today),monthDate=new Date(today.getFullYear(),today.getMonth(),1),weekStart=null,modalTask=null;const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random();function save(){persistPending();cloudSave().catch(e=>{toast('Ошибка синхронизации: '+e.message);console.error(e)})}
-function toast(s){const el=document.getElementById('toast');el.textContent=s;el.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.style.display='none',2600)}function moveDate(s,n){let d=parse(s);d.setDate(d.getDate()+n);return fmt(d)}function monthLabel(d){return months[d.getMonth()][0].toUpperCase()+months[d.getMonth()].slice(1)+' '+d.getFullYear()}function go(v){view=v;render()}function selectDate(s){selected=s;monthDate=new Date(parse(s).getFullYear(),parse(s).getMonth(),1);view='day';render()}function changeMonth(n){monthDate=new Date(monthDate.getFullYear(),monthDate.getMonth()+n,1);selected=fmt(monthDate);render()}function renderNav(){const items=[['day','day','День'],['week','week','Неделя'],['inbox','inbox','Входящие'],['overdue','overdue','Хвосты'],['archive','archive','Архив']];document.getElementById('nav').innerHTML=items.map(([v,i,t])=>`<button class="${view===v?'active':''}" onclick="go('${v}')"><span class="nav-symbol">${uiIcon(i)}</span>${t}${v==='inbox'?' ('+tasks.filter(x=>!x.isFolder&&!x.date&&(!x.done||pendingCompletions.has(x.id))).length+')':''}</button>`).join('');document.getElementById('mobilebar').innerHTML=items.map(([v,i,t])=>`<button class="${view===v?'active':''}" onclick="go('${v}')"><span class="ico">${uiIcon(i)}</span>${t}</button>`).join('');const arr=[];for(let n=-3;n<=12;n++){const d=new Date(today.getFullYear(),today.getMonth()+n,1);arr.push(`<button class="monthbtn ${monthDate.getMonth()===d.getMonth()&&monthDate.getFullYear()===d.getFullYear()?'active':''}" onclick="monthDate=new Date(${d.getFullYear()},${d.getMonth()},1);selected=fmt(monthDate);go('day')">${monthLabel(d)}</button>`)}document.getElementById('months').innerHTML=arr.join('')}
+const KEY='matrica.tasks.v1';const cats=[{label:'Срочно и важно',hint:"Нельзя откладывать: срок уже близко, а последствия важны. Например, оплатить счёт в последний день.",bg:'#2b1e24',fg:'#f59aa4',border:'#513039'},{label:'Важно, не срочно',hint:"Важно для вас, но время ещё есть. Например, заранее подготовиться к экзамену.",bg:'#172b26',fg:'#80d9b1',border:'#294d40'},{label:'Срочно, не важно',hint:"Нужно сделать скоро, но на ваши цели это почти не влияет. Например, подтвердить время доставки.",bg:'#2c271b',fg:'#e7c779',border:'#4d432b'},{label:'Не срочно, не важно',hint:"Необязательно и без спешки. Например, посмотреть случайные видео в интернете.",bg:'#202735',fg:'#a0b6de',border:'#364258'}];const months=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];const weekdays=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];let today=new Date();const pad=n=>String(n).padStart(2,'0');const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;const parse=s=>new Date(s+'T12:00:00');const human=s=>{const d=parse(s);return `${weekdays[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`};const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));let tasks=[];let view='day',selected=fmt(today),monthDate=new Date(today.getFullYear(),today.getMonth(),1),weekStart=null,modalTask=null;const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random();function save(){persistPending();cloudSave().catch(e=>{toast('Ошибка синхронизации: '+e.message);console.error(e)})}
+function toast(s){const el=document.getElementById('toast');el.textContent=s;el.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.style.display='none',2600)}function moveDate(s,n){let d=parse(s);d.setDate(d.getDate()+n);return fmt(d)}function monthLabel(d){return months[d.getMonth()][0].toUpperCase()+months[d.getMonth()].slice(1)+' '+d.getFullYear()}function go(v){view=v;render()}function selectDate(s){selected=s;monthDate=new Date(parse(s).getFullYear(),parse(s).getMonth(),1);view='day';render()}function changeMonth(n){monthDate=new Date(monthDate.getFullYear(),monthDate.getMonth()+n,1);selected=fmt(monthDate);render()}function renderNav(){const items=[['day','day','День'],['week','week','Неделя'],['inbox','inbox','Входящие'],['overdue','overdue','Хвосты'],['archive','archive','Архив']];document.getElementById('nav').innerHTML=items.map(([v,i,t])=>`<button class="${view===v?'active':''}" onclick="go('${v}')"><span class="nav-symbol">${uiIcon(i)}</span>${t}${v==='inbox'?' ('+tasks.filter(x=>!x.isFolder&&!x.date&&(!x.done||pendingCompletions.has(x.id))).length+')':''}</button>`).join('');document.getElementById('mobilebar').innerHTML=items.map(([v,i,t])=>`<button class="${view===v?'active':''}" onclick="go('${v}')"><span class="ico">${uiIcon(i)}</span>${t}</button>`).join('');}
 function calendar(){const y=monthDate.getFullYear(),m=monthDate.getMonth(),offset=(new Date(y,m,1).getDay()+6)%7,days=new Date(y,m+1,0).getDate();let out=`<div class="calendar"><div class="cal-head"><button class="btn" onclick="changeMonth(-1)">‹</button><strong>${monthLabel(monthDate)}</strong><button class="btn" onclick="changeMonth(1)">›</button></div><div class="cal-grid">${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(x=>`<div class="weekday">${x}</div>`).join('')}`;for(let i=0;i<offset;i++)out+='<div></div>';for(let d=1;d<=days;d++){const s=fmt(new Date(y,m,d));out+=`<button class="calday ${s===selected?'selected':''} ${s===fmt(today)?'today':''} ${tasks.some(t=>t.date===s&&(!t.done||pendingCompletions.has(t.id)))?'has':''}" onclick="selectDate('${s}')">${d}</button>`}return out+'</div></div>'}
 function taskHtml(t){if(quickEditor?.id===t.id)return quickEditorHtml();return `<div class="task" data-task-id="${t.id}" tabindex="0" draggable="true" ondragstart="startDrag(event,\'${t.id}\')" ondragend="clearDrag()"><button class="drag-handle" aria-label="Перетащить задачу" onpointerdown="touchDrag(event,\'${t.id}\')">⠿</button><input aria-label="Выполнить задачу" type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${t.id}')"><div class="taskbody"><button type="button" class="tasktitle quick-edit-title ${t.done?'done':''}" onclick="beginQuickEdit('${t.id}')">${esc(t.title)}</button>${t.note?`<button type="button" class="tasknote quick-edit-note" onclick="beginQuickEdit('${t.id}','note')">${esc(t.note)}</button>`:''}${t.time?`<div class="tasktime">◷ ${esc(t.time)}</div>`:''}</div><button class="taskmenu" title="Изменить задачу" onclick="editTask('${t.id}')">⋯</button></div>`}
 function dayHtml(s){const list=tasks.filter(t=>!t.isFolder&&t.date===s&&(!t.done||pendingCompletions.has(t.id))),done=tasks.filter(t=>!t.isFolder&&t.date===s&&t.done&&!pendingCompletions.has(t.id));return `<section class="day" id="day-${s}"><div class="dayhead"><h2>${human(s)}</h2><span class="count">${list.length} задач</span></div><div class="quadrants">${cats.map((c,i)=>{const ts=list.filter(t=>t.cat===i);return `<div class="quad" data-date="${s}" data-cat="${i}" ondragover="dragOver(event)" ondragleave="this.classList.remove(\'dragover\')" ondrop="dropTask(event)" style="--bg:${c.bg};--fg:${c.fg};--border:${c.border}"><div class="quadhead"><span>${['●','●','●','●'][i]} ${c.label}</span><button title="Добавить задачу" onclick="newTask('${s}',${i})">+</button></div><p class="quadhint">${esc(c.hint)}</p>${ts.length?ts.map(taskHtml).join(''):'<div class="empty">Пока нет задач</div>'}${quickEditor&&!quickEditor.id&&quickEditor.anchorDate===s&&quickEditor.anchorCat===i?quickEditorHtml():''}<button class="addline" onclick="newTask('${s}',${i})">＋ Добавить задачу</button></div>`}).join('')}</div>${done.length?`<details style="margin-top:10px"><summary class="small" style="cursor:pointer">Выполнено за день: ${done.length}</summary>${done.map(taskHtml).join('')}</details>`:''}</section>`}
@@ -141,7 +141,7 @@ function toggleTask(id){const t=tasks.find(t=>t.id===id&&!t.isFolder);if(!t)retu
 let quickEditor=null;
 function quickEditorHtml(){const q=quickEditor;return `<div class="task quick-task" data-quick-editor><div class="quick-ring" aria-hidden="true"></div><div class="taskbody"><input class="quick-title" id="qe-title" aria-label="Название задачи" placeholder="Название задачи" maxlength="300" required value="${esc(q.title)}" oninput="quickEditor.title=this.value" onkeydown="quickKey(event,'title')"><textarea class="quick-note" id="qe-note" aria-label="Описание задачи" placeholder="Добавить описание" rows="2" oninput="quickEditor.note=this.value" onkeydown="quickKey(event,'note')">${esc(q.note)}</textarea><div class="quick-fields"><label class="quick-chip">${uiIcon('week')}<input id="qe-date" type="date" aria-label="Дата задачи" value="${esc(q.date)}" onchange="quickEditor.date=this.value"></label><label class="quick-chip">${uiIcon('overdue')}<input id="qe-time" type="time" aria-label="Время задачи" value="${esc(q.time)}" onchange="quickEditor.time=this.value"></label></div><div class="quick-toolbar"><div class="quick-dates"><button type="button" onclick="quickSetDate(fmt(new Date()))">Сегодня</button><button type="button" onclick="quickSetDate(moveDate(fmt(new Date()),1))">Завтра</button><button class="quick-info" type="button" aria-label="Подробные настройки задачи" title="Подробные настройки" onclick="quickDetails()">ⓘ</button></div><div class="quick-finish"><button type="button" onclick="quickCancel()">Отмена</button><button type="button" class="quick-done" onclick="quickSave()" aria-label="Сохранить задачу">✓</button></div></div></div></div>`}
 function focusQuick(field='title'){const el=document.getElementById('qe-'+field);if(el){el.focus();el.setSelectionRange?.(el.value.length,el.value.length)}}
-function newTask(date='',cat=0){quickEditor={id:null,title:'',note:'',date,time:'',cat,folderId:date?'':inboxFolder==='all'?'':inboxFolder,anchorDate:date,anchorCat:cat};if(!date)view='inbox';else if(view!=='week'){selected=date;monthDate=new Date(parse(date).getFullYear(),parse(date).getMonth(),1);view='day'}const section=document.querySelector('details[data-feed-day="'+date+'"]');if(section)section.open=true;render();focusQuick()}
+function newTask(date='',cat=0){quickEditor={id:null,title:'',note:'',date,time:'',cat,folderId:date?'':view==='funnel'?activeFunnel:inboxFolder==='all'?'':inboxFolder,anchorDate:date,anchorCat:cat};if(!date){if(view!=='funnel')view='inbox'}else if(view!=='week'){selected=date;monthDate=new Date(parse(date).getFullYear(),parse(date).getMonth(),1);view='day'}const section=document.querySelector('details[data-feed-day="'+date+'"]');if(section)section.open=true;render();focusQuick()}
 function beginQuickEdit(id,field='title'){const t=tasks.find(t=>t.id===id&&!t.isFolder);if(!t)return;quickEditor={id:t.id,title:t.title,note:t.note||'',date:t.date||'',time:t.time||'',cat:t.cat,folderId:t.folderId||'',anchorDate:t.date||'',anchorCat:t.cat};render();focusQuick(field)}
 function quickSetDate(date){if(!quickEditor)return;quickEditor.date=date;const input=document.getElementById('qe-date');if(input)input.value=date}
 function quickKey(event,field){if(event.key==='Escape'){event.preventDefault();event.stopPropagation();quickCancel()}else if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();event.stopPropagation();if(field==='title')focusQuick('note');else quickSave()}}
@@ -151,61 +151,123 @@ function quickDetails(){if(!quickEditor)return;const q={...quickEditor};quickEdi
 function editTask(id){const t=tasks.find(t=>t.id===id);if(t){modalTask=id;showModal(t)}}function showModal(t){document.getElementById('modalroot').innerHTML=`<div class="modalback" onclick="if(event.target===this)closeModal()"><form class="modal" onsubmit="saveModal(event)"><h2>${modalTask?'Редактировать задачу':'Новая задача'}</h2><label class="field">Название<input id="t-title" required maxlength="300" value="${esc(t.title)}" placeholder="Что нужно сделать?"></label><label class="field">Описание<textarea id="t-note" placeholder="Детали, которые важно помнить">${esc(t.note)}</textarea></label><label class="field">Дата (можно оставить пустой — попадёт во Входящие)<input type="date" id="t-date" value="${esc(t.date)}"></label><label class="field">Время напоминания<input type="time" id="t-time" value="${esc(t.time)}"></label>${folderSelect(t)}<p class="small">Для напоминания нужны дата и время. Включите уведомления кнопкой колокольчика.</p><label class="field">Квадрат<select id="t-cat">${cats.map((c,i)=>`<option value="${i}" ${t.cat===i?'selected':''}>${c.label}</option>`).join('')}</select></label><div class="modalactions"><div>${modalTask?'<button type="button" class="btn" onclick="deleteTask()" style="color:#c14d4d">Удалить</button><button type="button" class="btn" onclick="copyTaskToDate()">Копировать на дату</button>':''}</div><div><button type="button" class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" type="submit">Сохранить</button></div></div></form></div>`;document.getElementById('t-title').focus()};function closeModal(){document.getElementById('modalroot').innerHTML=''}function saveModal(e){e.preventDefault();const title=document.getElementById('t-title').value.trim(),note=document.getElementById('t-note').value.trim(),date=document.getElementById('t-date').value,time=document.getElementById('t-time').value,cat=Number(document.getElementById('t-cat').value);if(!title)return;const t=modalTask?tasks.find(t=>t.id===modalTask):null;if(t)Object.assign(t,{title,note,date,time,cat,folderId:document.getElementById('t-folder').value});else tasks.push({id:uid(),title,note,date,time,cat,folderId:document.getElementById('t-folder').value,done:false,createdAt:new Date().toISOString()});save();closeModal();render();toast('Задача сохранена')}function deleteTask(){if(!modalTask||!confirm('Удалить задачу без возможности восстановления?'))return;tasks=tasks.filter(t=>t.id!==modalTask);save();closeModal();render();toast('Задача удалена')}
 
 const CLOUD_URL='https://qageovdipbmegxfcsvdp.supabase.co', CLOUD_KEY='sb_publishable_S6jh0juDi-9tXB9OMY-now_qe53hTrc';
-let db=null,cloudUser=null,cloudSnapshot=new Map(),cloudBusy=false,cloudQueued=false,cloudChannel=null;
-const cloudEl=()=>document.getElementById('cloudstatus');
-function cloudStatus(s){cloudEl().textContent=s}
-function authScreen(msg=''){
- document.getElementById('authroot').innerHTML=`<div class="modalback" style="z-index:1000"><form class="modal" onsubmit="cloudAuth(event)"><h2>◩ Матрица — вход</h2><p class="small">Один аккаунт для MacBook и iPhone. Войди или зарегистрируйся.</p><label class="field">Электронная почта<input id="auth-email" type="email" autocomplete="email" required placeholder="mail@example.com"></label><label class="field">Пароль<input id="auth-password" type="password" autocomplete="current-password" minlength="12" required></label><p class="small" id="auth-message">${esc(msg)}</p><div class="modalactions"><button class="btn" type="button" onclick="cloudAuthAction='signup';document.getElementById('auth-form-submit').click()">Регистрация</button><button class="btn primary" id="auth-form-submit" type="submit">Войти</button></div></form></div>`;
+let db=null,cloudUser=null,cloudSnapshot=new Map(),cloudChannel=null;
+let cloudCanSync=false,cloudEpoch=0,cloudRun=null,cloudQueued=false;
+function cloudStatus(message){
+ for(const id of ['cloudstatus','mobile-cloudstatus'])document.getElementById(id).textContent=message;
 }
-let cloudAuthAction='signin';
-async function cloudAuth(e){e.preventDefault();const email=document.getElementById('auth-email').value.trim(),password=document.getElementById('auth-password').value;const msg=document.getElementById('auth-message');msg.textContent='Подождите...';const res=cloudAuthAction==='signup'?await db.auth.signUp({email,password}):await db.auth.signInWithPassword({email,password});cloudAuthAction='signin';if(res.error){msg.textContent=res.error.message;return}if(!res.data.session){msg.textContent='Проверь почту и подтверди регистрацию, затем войди.';return}document.getElementById('authroot').innerHTML='';await cloudLogin(res.data.session.user)}
-async function cloudInit(){try{if(!window.supabase)throw new Error('Библиотека Supabase не загрузилась. Нужен интернет и доступ к CDN.');db=window.supabase.createClient(CLOUD_URL,CLOUD_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});const {data,error}=await db.auth.getSession();if(error)throw error;db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){taskPushSignedOut();quickEditor=null;clearPendingCompletions();taskClipboard=null;selectedTaskId=null;pasteTarget=null;cloudUser=null;tasks=[];cloudSnapshot.clear();render();authScreen();cloudStatus('Не выполнен вход')}else if(event==='SIGNED_IN'&&session?.user&&!cloudUser){setTimeout(()=>cloudLogin(session.user),0)}});if(data.session?.user)await cloudLogin(data.session.user);else{authScreen();cloudStatus('Войдите в аккаунт')}}catch(e){cloudStatus('Ошибка: '+e.message);authScreen('Не удалось подключиться к Supabase: '+e.message)}}
-function fromRow(r){return MatricaCore.decode(r)}
-function toRow(t){return MatricaCore.encode(t,cloudUser.id)}
-async function cloudLogin(user){if(cloudUser?.id===user.id)return;cloudUser=user;try{const pending=JSON.parse(localStorage.getItem(pendingKey()));if(pending&&Array.isArray(pending.tasks)&&Array.isArray(pending.snapshot)){tasks=pending.tasks;cloudSnapshot=new Map(pending.snapshot)}}catch(e){console.error(e)}document.getElementById('authroot').innerHTML='';document.getElementById('signout').style.display='block';cloudStatus('Загружаем задачи...');await cloudRefresh();initTaskPush().catch(console.error);if(cloudChannel)db.removeChannel(cloudChannel);cloudChannel=db.channel('tasks-'+user.id).on('postgres_changes',{event:'*',schema:'public',table:'tasks',filter:'user_id=eq.'+user.id},()=>{resumeSync()}).subscribe()}
-let refreshPromise=null,needsRefresh=false;
+function fromRow(row){return MatricaCore.decode(row)}
+function toRow(task){return MatricaCore.encode(task,cloudUser.id)}
 function pendingKey(){return 'matrica.pending.v2.'+cloudUser.id}
-function persistPending(){if(!cloudUser)return;try{localStorage.setItem(pendingKey(),JSON.stringify({tasks,snapshot:[...cloudSnapshot]}))}catch(e){toast('Не удалось сохранить локальную копию: '+e.message)}}
-async function cloudRefresh(){
+function persistPending(){
  if(!cloudUser)return;
- if(cloudBusy){needsRefresh=true;return}
- if(refreshPromise)return refreshPromise;
- const user=cloudUser.id;
- refreshPromise=(async()=>{
- const {data,error}=await db.from('tasks').select('*').eq('user_id',user).order('created_at',{ascending:true});
- if(error)throw error;if(cloudUser?.id!==user)return;
- try{const backupKey='matrica.backup.before-workflow.'+user;if(!localStorage.getItem(backupKey))localStorage.setItem(backupKey,JSON.stringify({savedAt:new Date().toISOString(),rows:data}))}catch(e){console.error('Local backup unavailable',e)}
- const remote=data.map(fromRow),snapshot=new Map(remote.map(t=>[t.id,JSON.stringify(toRow(t))]));
- const local=new Map(tasks.map(t=>[t.id,t]));
- // Rebase local edits and deletions onto fresh remote rows.
- const merged=remote.filter(t=>!cloudSnapshot.has(t.id)||local.has(t.id)||!t.isFolder).map(t=>{
- const own=local.get(t.id);if(!own||JSON.stringify(toRow(own))===cloudSnapshot.get(t.id))return t;let base;try{base=fromRow(JSON.parse(cloudSnapshot.get(t.id)))}catch{}return MatricaCore.merge(base,own,t)});
- for(const t of tasks)if(!snapshot.has(t.id)&&JSON.stringify(toRow(t))!==cloudSnapshot.get(t.id))merged.push(t);
- const retained=merged.filter(t=>!archiveExpired(t));const viewChanged=JSON.stringify(tasks)!==JSON.stringify(retained);tasks=retained;cloudSnapshot=snapshot;persistPending();if(viewChanged)render();
- })();
- try{await refreshPromise}finally{refreshPromise=null}
- await cloudSave();
+ try{
+  localStorage.setItem(pendingKey(),JSON.stringify({
+   tasks,snapshot:[...cloudSnapshot],months:[...archivedMonths],monthEdits:[...monthEdits],
+  }));
+ }catch(error){toast('Не удалось сохранить локальную копию')}
+}
+async function readTaskRows(user){
+ const rows=[];
+ let cursor;
+ do {
+  let query=db.from('tasks').select('*').eq('user_id',user).order('id').limit(500);
+  if(cursor)query=query.gt('id',cursor);
+  const {data,error}=await query;
+  if(error)throw error;
+  rows.push(...data);
+  if(data.length<500)return rows;
+  cursor=data.at(-1).id;
+ }while(cursor);
+ return rows;
+}
+function mergeCloudTasks(rows){
+ const remote=rows.map(fromRow);
+ const normalized=new Map(remote.map(task=>[task.id,JSON.stringify(toRow(task))]));
+ const local=new Map(tasks.map(task=>[task.id,task]));
+ // An absent local folder is a pending deletion. Other task deletions are soft.
+ const merged=remote.filter(task=>!task.isFolder||!cloudSnapshot.has(task.id)||local.has(task.id)).map(task=>{
+  const own=local.get(task.id),base=cloudSnapshot.get(task.id);
+  if(!own||JSON.stringify(toRow(own))===base)return task;
+  return MatricaCore.merge(base?fromRow(JSON.parse(base)):null,own,task);
+ });
+ for(const task of tasks){
+  if(!normalized.has(task.id)&&JSON.stringify(toRow(task))!==cloudSnapshot.get(task.id))merged.push(task);
+ }
+ merged.sort((a,b)=>String(a.createdAt).localeCompare(String(b.createdAt))||a.id.localeCompare(b.id));
+ const changed=JSON.stringify(tasks)!==JSON.stringify(merged);
+ tasks=merged;
+ cloudSnapshot=normalized;
+ return changed;
+}
+async function syncCloudOnce(user,epoch){
+ const [rows,months]=await Promise.all([
+  readTaskRows(user),
+  db.from('matrica_months').select('month,archived').eq('user_id',user),
+ ]);
+ if(epoch!==cloudEpoch||!cloudCanSync)return true;
+ if(months.error)throw months.error;
+ const changed=mergeCloudTasks(rows);
+ const monthsChanged=mergeArchivedMonths(months.data);
+ persistPending();
+ if(changed||monthsChanged)render();
+ openPendingReminder();
+
+ const revisions=new Map(rows.map(row=>[row.id,row.updated_at]));
+ const upserts=tasks.map(toRow).filter(row=>JSON.stringify(row)!==cloudSnapshot.get(row.id))
+  .map(row=>({...row,revision:revisions.get(row.id)??null,generated:!!fromRow(row).generatedFrom}));
+ const local=new Set(tasks.map(task=>task.id));
+ const deletions=[...cloudSnapshot].filter(([id,row])=>!local.has(id)&&fromRow(JSON.parse(row)).isFolder)
+  .map(([id])=>({id,revision:revisions.get(id)}));
+ if(upserts.length||deletions.length){
+  const result=await db.rpc('matrica_write_tasks',{p_user_id:user,p_upserts:upserts,p_deletions:deletions});
+  if(epoch!==cloudEpoch||!cloudCanSync)return true;
+  if(result.error)throw result.error;
+  if(!result.data)return false;
+  for(const {revision,generated,...row} of upserts)cloudSnapshot.set(row.id,JSON.stringify(row));
+  for(const {id} of deletions)cloudSnapshot.delete(id);
+  persistPending();
+  if(upserts.some(row=>row.generated&&row.revision===null))cloudQueued=true;
+ }
+ const edits=[...monthEdits];
+ if(edits.length){
+  const {error}=await db.from('matrica_months').upsert(edits.map(([month,archived])=>({user_id:user,month,archived})));
+  if(epoch!==cloudEpoch||!cloudCanSync)return true;
+  if(error)throw error;
+  for(const [month,value] of edits)if(monthEdits.get(month)===value)monthEdits.delete(month);
+  persistPending();
+ }
+ return true;
+}
+function cloudRefresh(){
+ if(!cloudUser)return;
+ if(navigator.onLine===false||!cloudCanSync){offlineStatus();return}
+ if(cloudRun){cloudQueued=true;return cloudRun}
+ const user=cloudUser.id,epoch=cloudEpoch;
+ cloudRun=(async()=>{
+  let conflicts=0;
+  do {
+   cloudQueued=false;
+   const saved=await syncCloudOnce(user,epoch);
+   if(epoch!==cloudEpoch||!cloudCanSync)return;
+   conflicts=saved?0:conflicts+1;
+   if(conflicts===3)throw new Error('Задачи меняются на другом устройстве');
+   if(!saved)cloudQueued=true;
+  }while(cloudQueued);
+  cloudStatus('Синхронизировано');
+ })().catch(error=>{
+  if(epoch===cloudEpoch)cloudStatus('Изменения на устройстве · синхронизация повторится');
+  throw error;
+ }).finally(()=>{
+  if(epoch===cloudEpoch)cloudRun=null;
+ });
+ return cloudRun;
 }
 async function cloudSave(){
  if(!cloudUser)return;
- if(cloudBusy||refreshPromise){cloudQueued=true;return}
- const user=cloudUser.id;cloudBusy=true;cloudStatus('☁ Сохранение...');
- let succeeded=false;
- try{
- const rows=tasks.map(toRow),current=new Map(rows.map(r=>[r.id,JSON.stringify(r)]));
- const changes=rows.filter(r=>cloudSnapshot.get(r.id)!==current.get(r.id));
- const deleted=[...cloudSnapshot.keys()].filter(id=>{if(current.has(id))return false;try{const row=JSON.parse(cloudSnapshot.get(id)),meta=JSON.parse(row.description);return meta?.matrica===2&&meta.kind==='folder'}catch{return false}});
- const generated=changes.filter(r=>!cloudSnapshot.has(r.id)&&fromRow(r).generatedFrom),regular=changes.filter(r=>!generated.includes(r));
- if(generated.length){const {error}=await db.from('tasks').upsert(generated,{onConflict:'id',ignoreDuplicates:true});if(error)throw error;needsRefresh=true}
- if(regular.length){const {error}=await db.from('tasks').upsert(regular,{onConflict:'id'});if(error)throw error}
- if(deleted.length){const {error}=await db.from('tasks').delete().in('id',deleted).eq('user_id',user);if(error)throw error}
- if(cloudUser?.id!==user)return;
- cloudSnapshot=current;persistPending();succeeded=true;cloudStatus('☁ Синхронизировано · '+cloudUser.email);
- }catch(e){cloudStatus('Ошибка сохранения: '+e.message);throw e}
- finally{cloudBusy=false;if(succeeded&&cloudQueued){cloudQueued=false;await cloudSave()}else if(succeeded&&needsRefresh){needsRefresh=false;await cloudRefresh()}}
+ persistPending();
+ await cloudRefresh();
 }
-async function cloudSignOut(){if(!confirm('Выйти из аккаунта Матрицы?'))return;try{await detachTaskPush()}catch(e){console.error('Не удалось удалить серверную подписку');}await db.auth.signOut();cloudUser=null;tasks=[];cloudSnapshot.clear();render();authScreen();cloudStatus('Не выполнен вход');document.getElementById('signout').style.display='none'}
-
 
 let copySource=null;
 function copyTaskToDate(){const original=tasks.find(t=>t.id===modalTask&&!t.isFolder);if(!original)return;copySource={title:document.getElementById('t-title').value.trim(),note:document.getElementById('t-note').value.trim(),time:document.getElementById('t-time').value,cat:Number(document.getElementById('t-cat').value),folderId:document.getElementById('t-folder').value};if(!copySource.title){document.getElementById('t-title').reportValidity();return}document.getElementById('modalroot').innerHTML=`<div class="modalback" onclick="if(event.target===this)closeModal()"><form class="modal" onsubmit="pasteTaskCopy(event)"><h2>Копировать на другую дату</h2><p>${esc(copySource.title)}</p><p class="small">Название, описание и время будут скопированы. Исходная задача останется на месте.</p><label class="field">Дата для копии<input id="copy-date" type="date" required value="${esc(original.date||selected)}"></label><div class="modalactions"><div></div><div><button class="btn" type="button" onclick="closeModal()">Отмена</button><button class="btn primary" type="submit">Создать копию</button></div></div></form></div>`;document.getElementById('copy-date').focus()}
@@ -286,9 +348,9 @@ function removeFolder(id){
  save();closeModal();render();toast('Папка удалена. Задачи сохранены');
 }
 
-function folderSelect(t){return `<label class="field">Папка во Входящих<select id="t-folder"><option value="">Без папки</option>${tasks.filter(f=>f.isFolder).map(f=>`<option value="${f.id}" ${t.folderId===f.id?'selected':''}>${esc(f.title)}</option>`).join('')}</select></label>`}
-function addFolder(){document.getElementById('modalroot').innerHTML=`<div class="modalback" onclick="if(event.target===this)closeModal()"><form class="modal" onsubmit="saveFolder(event)"><h2>Новая папка</h2><label class="field">Название папки<input id="folder-title" required maxlength="100" placeholder="Например, Работа"></label><p id="folder-error" class="small" role="alert" style="color:#c14d4d"></p><div class="modalactions"><div></div><div><button class="btn" type="button" onclick="closeModal()">Отмена</button><button class="btn primary" type="submit">Создать</button></div></div></form></div>`;document.getElementById('folder-title').focus()}
-function saveFolder(event){event.preventDefault();const input=document.getElementById('folder-title'),title=input.value.trim();if(!title){input.setCustomValidity('Введите название папки');input.reportValidity();input.oninput=()=>input.setCustomValidity('');return}if(tasks.some(t=>t.isFolder&&t.title.toLocaleLowerCase()===title.toLocaleLowerCase())){document.getElementById('folder-error').textContent='Папка с таким названием уже существует';return}const id=uid();tasks.push({id,title,note:'',date:'',time:'',cat:1,done:false,isFolder:true,createdAt:new Date().toISOString()});inboxFolder=id;save();closeModal();render();toast('Папка создана')}
+function folderSelect(t){return `<label class="field">Папка / воронка<select id="t-folder"><option value="">Без папки</option>${tasks.filter(f=>f.isFolder).map(f=>`<option value="${f.id}" ${t.folderId===f.id?'selected':''}>${esc(f.title)}</option>`).join('')}</select></label>`}
+function addFolder(funnel=false){document.getElementById('modalroot').innerHTML=`<div class="modalback" onclick="if(event.target===this)closeModal()"><form class="modal" onsubmit="saveFolder(event,${funnel})"><h2>${funnel?'Новая воронка':'Новая папка'}</h2><label class="field">Название<input id="folder-title" required maxlength="100" placeholder="Например, Работа"></label><p id="folder-error" class="small" role="alert" style="color:#c14d4d"></p><div class="modalactions"><div></div><div><button class="btn" type="button" onclick="closeModal()">Отмена</button><button class="btn primary" type="submit">Создать</button></div></div></form></div>`;document.getElementById('folder-title').focus()}
+function saveFolder(event,funnel=false){event.preventDefault();const input=document.getElementById('folder-title'),title=input.value.trim();if(!title){input.setCustomValidity('Введите название папки');input.reportValidity();input.oninput=()=>input.setCustomValidity('');return}if(tasks.some(t=>t.isFolder&&t.title.toLocaleLowerCase()===title.toLocaleLowerCase())){document.getElementById('folder-error').textContent='Папка с таким названием уже существует';return}const id=uid();tasks.push({id,title,note:'',date:'',time:'',cat:1,done:false,isFolder:true,createdAt:new Date().toISOString()});inboxFolder=id;save();closeModal();if(funnel)openFunnel(id);else render();toast(funnel?'Воронка создана':'Папка создана')}
 function moveTask(id,date,cat){const t=tasks.find(t=>t.id===id&&!t.isFolder);if(!t||!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isInteger(cat)||cat<0||cat>3)return;t.date=date;t.cat=cat;save();render();toast('Задача перенесена')}
 function startDrag(e,id){draggedTask=id;e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}
 function clearDrag(){draggedTask=null;document.querySelectorAll('.dragover').forEach(e=>e.classList.remove('dragover'))}
@@ -298,9 +360,6 @@ function touchDrag(e,id){if(e.pointerType==='mouse')return;e.preventDefault();co
  const move=ev=>{clearDrag();target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('.quad');target?.classList.add('dragover')};
  const finish=ev=>{handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',finish);handle.removeEventListener('pointercancel',finish);clearDrag();if(ev.type==='pointerup'&&target)moveTask(id,target.dataset.date,Number(target.dataset.cat))};
  handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',finish);handle.addEventListener('pointercancel',finish)}
-function resumeSync(){if(document.visibilityState==='hidden'||!cloudUser)return;cloudRefresh().catch(e=>{cloudStatus('Ожидаем подключения');console.error(e)})}
-document.addEventListener('visibilitychange',resumeSync);window.addEventListener('focus',resumeSync);window.addEventListener('pageshow',resumeSync);window.addEventListener('online',resumeSync);
-
 let selectedTaskId=null,taskClipboard=null,pasteTarget=null;
 function paintTaskSelection(){document.querySelectorAll('[data-task-id]').forEach(el=>{el.classList.toggle('task-selected',el.dataset.taskId===selectedTaskId);el.classList.toggle('task-cut',taskClipboard?.mode==='cut'&&el.dataset.taskId===taskClipboard.task.id)});document.querySelectorAll('.quad').forEach(el=>el.classList.toggle('paste-target',el.dataset.date===pasteTarget?.date&&Number(el.dataset.cat)===pasteTarget?.cat))}
 function selectTaskForClipboard(event){if(document.getElementById('modalroot').children.length)return;const row=event.target.closest('[data-task-id]'),quad=event.target.closest('.quad');if(row)selectedTaskId=row.dataset.taskId;else if(quad)selectedTaskId=null;if(quad)pasteTarget={date:quad.dataset.date,cat:Number(quad.dataset.cat)};paintTaskSelection();updateTaskTools()}
@@ -325,7 +384,7 @@ updateThemeButton();
 const ARCHIVE_RETENTION_MS=30*24*60*60*1000;
 function archiveExpired(){return false}
 function completionLabel(task){const completed=task.completedAt?new Date(task.completedAt):null;return completed&&Number.isFinite(completed.getTime())?'Завершено '+new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(completed):'Дата завершения не сохранена'}
-setInterval(resumeSync,60*60*1000);
+
 
 // Follow the visible screen while Safari opens/closes the keyboard.
 // No viewport scale restrictions: pinch-to-zoom remains available.
@@ -346,5 +405,5 @@ window.addEventListener('resize',updateEditingViewport);
 updateEditingViewport();
 
 
-</script><script src="./task-core.js?v=20261119"></script><script src="./offline.js?v=20261120-offline2"></script>
-<script src="./workflow.js?v=20261120-app"></script></body></html>
+</script><script src="./task-core.js?v=20261119"></script><script src="./planner-lists.js?v=20261123"></script><script src="./offline.js?v=20261123"></script>
+<script src="./workflow.js?v=20261123"></script></body></html>

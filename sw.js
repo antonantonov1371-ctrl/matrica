@@ -1,10 +1,15 @@
 'use strict';
-// Only public application files are cached. Account data stays in account-scoped local storage.
-const APP_CACHE='matrica-shell-20261120-offline-v2';
-const APP_ASSETS=['./','index.html','task-core.js?v=20261119','workflow.js?v=20261120-app','workflow.css?v=20261120-app','offline.js?v=20261120-offline2','push-client.js?v=20261119','vendor/supabase-2.49.8.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
+
+const APP_CACHE='matrica-shell-20261123-private';
+const APP_ASSETS=['index.html','task-core.js?v=20261119','workflow.js?v=20261123','workflow.css?v=20261123','offline.js?v=20261123','planner-lists.js?v=20261123','push-client.js?v=20261123','vendor/supabase-2.49.8.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
+const scope=new URL(self.registration.scope);
+const indexURL=new URL('index.html',scope);
+function isAppEntry(url){
+ return url.origin===scope.origin&&(url.pathname===scope.pathname||url.pathname===indexURL.pathname);
+}
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const cache=await caches.open(APP_CACHE);
- await cache.addAll(APP_ASSETS.map(path=>new Request(new URL(path,self.registration.scope),{cache:'reload'})));
+ await cache.addAll(APP_ASSETS.map(path=>new Request(new URL(path,scope),{cache:'reload',redirect:'error'})));
  await self.skipWaiting();
 })()));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
@@ -12,15 +17,20 @@ self.addEventListener('activate',event=>event.waitUntil((async()=>{
  await self.clients.claim();
 })()));
 self.addEventListener('fetch',event=>{
- const url=new URL(event.request.url),scope=new URL(self.registration.scope);
- if(event.request.method!=='GET'||url.origin!==scope.origin||!url.pathname.startsWith(scope.pathname))return;
- const asset=APP_ASSETS.find(path=>new URL(path,scope).pathname===url.pathname);
- if(event.request.mode!=='navigate'&&!asset)return;
+ const url=new URL(event.request.url);
+ if(event.request.method!=='GET'||url.origin!==scope.origin)return;
+ if(event.request.mode==='navigate'){
+  if(!isAppEntry(url))return;
+  // Online navigation goes through the host's access checks. Cache is an offline fallback.
+  event.respondWith(fetch(event.request).catch(async()=>{
+   return (await (await caches.open(APP_CACHE)).match(indexURL))||Response.error();
+  }));
+  return;
+ }
+ if(!APP_ASSETS.some(path=>new URL(path,scope).href===url.href))return;
  event.respondWith((async()=>{
- const cache=await caches.open(APP_CACHE);
- // Serve a complete, consistent release; worker installation updates it atomically.
- if(event.request.mode==='navigate')return (await cache.match(new URL('index.html',scope)))||fetch(event.request);
- return (await cache.match(new URL(asset,scope)))||fetch(event.request);
+  const cache=await caches.open(APP_CACHE);
+  return (await cache.match(url))||fetch(event.request);
  })());
 });
 self.addEventListener('push', event => {
@@ -40,11 +50,11 @@ self.addEventListener('push', event => {
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   const taskId=event.notification.data?.taskId;
-  const target=new URL('index.html',self.registration.scope);
+  const target=new URL('./',scope);
   if(taskId) target.searchParams.set('task',taskId);
   event.waitUntil((async()=>{
     const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
-    const client=windows.find(w=>w.url.startsWith(self.registration.scope));
+    const client=windows.find(w=>isAppEntry(new URL(w.url)));
     if(client) {
       if(taskId) client.postMessage({type:'matrica-open-task',taskId});
       return client.focus();

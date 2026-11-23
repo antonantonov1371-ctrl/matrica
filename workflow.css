@@ -67,3 +67,19 @@
 .quad-heading-label{min-width:0}.quad-toggle .quad-count{flex:none;margin-inline-start:2px;white-space:nowrap;font-variant-numeric:tabular-nums}
 
 .calendar-toggle[hidden]{display:none!important}.calendar-toggle[aria-pressed="true"]{color:var(--accent,#6b9fff)}
+
+.auth-back{z-index:1000;background:var(--app-bg,#101318)}
+.auth-back .modal{max-width:420px}
+.planner-mobile{display:none}
+.planner-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px;align-items:center}
+.planner-row .monthbtn{display:flex;align-items:center;gap:8px;min-width:0;min-height:44px;overflow-wrap:anywhere;font-size:14px}
+.planner-row .ui-icon{width:17px;height:17px;flex:none}
+.planner-row .planner-row-menu{min-width:36px;min-height:36px;padding:4px 8px}
+.planner-list h3{margin:15px 0 6px;font-size:15px}
+.planner-new-funnel,.planner-list-link{text-align:left}
+.planner-list .modalactions{flex-wrap:wrap}
+@media(max-width:850px){
+ .planner-mobile{display:block}
+ .planner-row .planner-row-menu{min-width:44px;min-height:44px}
+ #mobile-cloudstatus{margin-top:12px}
+}

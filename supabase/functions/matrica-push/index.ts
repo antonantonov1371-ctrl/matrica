@@ -7,7 +7,11 @@ const env = (name: string) => Deno.env.get(name) || '';
 const url = env('SUPABASE_URL');
 const service = createClient(url, env('SUPABASE_SERVICE_ROLE_KEY'), {auth:{persistSession:false}});
 const checked = async (result: any) => { const r=await result; if(r.error) throw r.error; return r.data; };
-const origins = (env('ALLOWED_ORIGINS') || 'https://antonantonov1371-ctrl.github.io,http://127.0.0.1:4173,http://localhost:4173').split(',').map(v=>v.trim()).filter(Boolean);
+const origins = new Set([
+  'https://matrica.anton-antonov1371.chatgpt.site',
+  ...(env('ALLOWED_ORIGINS') || 'https://antonantonov1371-ctrl.github.io,http://127.0.0.1:4173,http://localhost:4173')
+    .split(',').map(value => value.trim()).filter(Boolean),
+]);
 const proposed=webpush.generateVAPIDKeys();
 const credentials=await checked(service.rpc('push_server_credentials',{
   proposed_public:proposed.publicKey,proposed_private:proposed.privateKey,
@@ -57,9 +61,9 @@ Deno.serve(async req => {
   const origin=req.headers.get('Origin');
   const cors:Record<string,string>={'Content-Type':'application/json','Cache-Control':'no-store','Vary':'Origin',
     'Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'GET,POST,OPTIONS'};
-  if(origin && origins.includes(origin)) cors['Access-Control-Allow-Origin']=origin;
+  if(origin && origins.has(origin)) cors['Access-Control-Allow-Origin']=origin;
   const respond=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:cors});
-  if(origin && !origins.includes(origin)) return respond({error:'Origin not allowed'},403);
+  if(origin && !origins.has(origin)) return respond({error:'Origin not allowed'},403);
   if(req.method==='OPTIONS') return new Response(null,{status:204,headers:cors});
   const action=new URL(req.url).searchParams.get('action') || '';
   if(action==='config' && req.method==='GET') {
@@ -108,12 +112,19 @@ Deno.serve(async req => {
       return respond({enabled:false});
     }
     if(action==='test') {
-      const threshold=new Date(Date.now()-30000).toISOString();
-      const updated=await checked(service.from('notification_preferences').update({last_test_at:new Date().toISOString()}).eq('user_id',user.id).or(`last_test_at.is.null,last_test_at.lt.${threshold}`).select('user_id'));
-      if(!updated.length) return respond({error:'Подождите 30 секунд перед повторной проверкой'},429);
       const sub=await checked(db.from('push_subscriptions').select('*').eq('endpoint',body.endpoint || '').maybeSingle());
-      if(!sub) return respond({error:'Device is not subscribed'},400);
-      await webpush.sendNotification({endpoint:sub.endpoint,keys:{p256dh:sub.p256dh,auth:sub.auth}},JSON.stringify({title:'Матрица',body:'Проверочное напоминание. Уведомления разрешены на этом устройстве.',tag:'matrica-test'}),{TTL:300,urgency:'high',timeout:5000});
+      if(!sub) return respond({error:'Подписка больше не действует. Включите уведомления снова.'},410);
+      const now=new Date().toISOString(),threshold=new Date(Date.now()-30000).toISOString();
+      const updated=await checked(service.from('notification_preferences').update({last_test_at:now}).eq('user_id',user.id).or(`last_test_at.is.null,last_test_at.lt.${threshold}`).select('user_id'));
+      if(!updated.length) return respond({error:'Подождите 30 секунд перед повторной проверкой'},429);
+      try {
+        await webpush.sendNotification({endpoint:sub.endpoint,keys:{p256dh:sub.p256dh,auth:sub.auth}},JSON.stringify({title:'Матрица',body:'Проверочное напоминание. Уведомления разрешены на этом устройстве.',tag:'matrica-test'}),{TTL:300,urgency:'high',timeout:5000});
+      } catch(error:any) {
+        if(error.statusCode!==404 && error.statusCode!==410) throw error;
+        await checked(db.from('push_subscriptions').delete().eq('id',sub.id));
+        await checked(service.from('notification_preferences').update({last_test_at:null}).eq('user_id',user.id).eq('last_test_at',now));
+        return respond({error:'Подписка больше не действует. Включите уведомления снова.'},410);
+      }
       return respond({sent:true});
     }
     return respond({error:'Unknown action'},404);
