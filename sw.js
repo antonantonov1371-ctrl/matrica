@@ -1,7 +1,7 @@
 'use strict';
 // Only public application files are cached. Account data stays in account-scoped local storage.
-const APP_CACHE='matrica-shell-20261120-offline-v2';
-const APP_ASSETS=['./','index.html','task-core.js?v=20261119','workflow.js?v=20261120-app','workflow.css?v=20261120-app','offline.js?v=20261120-offline2','push-client.js?v=20261119','vendor/supabase-2.49.8.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
+const APP_CACHE='matrica-shell-20261123-lists-v1';
+const APP_ASSETS=['./','index.html','task-core.js?v=20261123-lists','workflow.js?v=20261123-lists','navigation.js?v=20261123-lists','workflow.css?v=20261123-lists','offline.js?v=20261123-lists','push-client.js?v=20261119','vendor/supabase-2.49.8.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const cache=await caches.open(APP_CACHE);
  await cache.addAll(APP_ASSETS.map(path=>new Request(new URL(path,self.registration.scope),{cache:'reload'})));

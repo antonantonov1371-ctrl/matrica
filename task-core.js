@@ -11,13 +11,13 @@
     let raw;try{raw=JSON.parse(row.description)}catch{}
     const meta=raw&&raw.matrica===2&&typeof raw==='object'?raw:null;
     return {id:row.id,title:row.title,note:meta?String(meta.note||''):row.description||'',folderId:meta?.folderId||'',isFolder:meta?.kind==='folder',folderRank:Number.isFinite(meta?.folderRank)?meta.folderRank:undefined,
-      date:row.task_date||'',time:row.task_time?.slice(0,5)||'',cat:row.quadrant==null?1:row.quadrant-1,done:!!row.completed,completedAt:row.completed_at||null,createdAt:row.created_at,
+      date:row.task_date||'',time:row.task_time?.slice(0,5)||'',cat:row.quadrant==null?(Number.isInteger(meta?.inboxQuadrant)&&meta.inboxQuadrant>=0&&meta.inboxQuadrant<4?meta.inboxQuadrant:1):row.quadrant-1,done:!!row.completed,completedAt:row.completed_at||null,createdAt:row.created_at,
       tags:tags(meta?.tags),flagged:!!meta?.flagged,subtasks:subtasks(meta?.subtasks),repeat:repeat(meta?.repeat),url:typeof meta?.url==='string'?meta.url:'',rank:Number.isFinite(meta?.rank)?meta.rank:undefined,
       deletedAt:meta?.deletedAt||null,deletedState:meta?.deletedState||null,seriesId:meta?.seriesId||null,nextOccurrenceId:meta?.nextOccurrenceId||null,generatedFrom:meta?.generatedFrom||null,_meta:meta?copy(meta):null};
   }
   function encode(task,userId){
     const t=task,meta={...(t._meta||{}),matrica:2,kind:t.isFolder?'folder':'task',folderId:t.folderId||'',note:t.note||''};
-    const optional={folderRank:t.folderRank,tags:tags(t.tags),flagged:!!t.flagged,subtasks:subtasks(t.subtasks),repeat:repeat(t.repeat),url:t.url||'',rank:t.rank,deletedAt:t.deletedAt||null,deletedState:t.deletedState||null,seriesId:t.seriesId||null,nextOccurrenceId:t.nextOccurrenceId||null,generatedFrom:t.generatedFrom||null};
+    const optional={inboxQuadrant:!t.date&&t.folderId&&Number.isInteger(t.cat)?t.cat:undefined,folderRank:t.folderRank,tags:tags(t.tags),flagged:!!t.flagged,subtasks:subtasks(t.subtasks),repeat:repeat(t.repeat),url:t.url||'',rank:t.rank,deletedAt:t.deletedAt||null,deletedState:t.deletedState||null,seriesId:t.seriesId||null,nextOccurrenceId:t.nextOccurrenceId||null,generatedFrom:t.generatedFrom||null};
     for(const [key,value] of Object.entries(optional)){if(value!=null&&value!==false&&value!==''&&(!Array.isArray(value)||value.length))meta[key]=value;else delete meta[key]}
     // Keep existing v2 envelopes and unknown keys even when all new fields are empty.
     const hasMeta=t._meta||t.isFolder||t.folderId||Object.keys(meta).some(k=>!['matrica','kind','folderId','note'].includes(k));
