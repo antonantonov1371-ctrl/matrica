@@ -17,6 +17,7 @@ create table public.telegram_links (
   last_test_at timestamptz,
   created_at timestamptz not null default now()
 );
+create index telegram_settings_owner_idx on public.telegram_settings(owner_id);
 create table public.telegram_link_codes (
   user_id uuid primary key references auth.users(id) on delete cascade,
   token_hash text not null unique,

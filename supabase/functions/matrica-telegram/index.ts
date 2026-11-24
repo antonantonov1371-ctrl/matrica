@@ -18,7 +18,12 @@ async function telegram(token:string,method:string,body:any){
  return result.result;
 }
 const repo={
- tasks:(owner:string)=>checked(service.from('tasks').select('*').eq('user_id',owner).order('created_at')),
+ tasks:async(owner:string)=>{
+   const rows=[];for(let start=0;;start+=500){
+     const page=await checked(service.from('tasks').select('*').eq('user_id',owner).order('id').range(start,start+499));
+     rows.push(...page);if(page.length<500)return rows;
+   }
+ },
  task:(owner:string,id:string)=>checked(service.from('tasks').select('*').eq('user_id',owner).eq('id',id).maybeSingle()),
  link:(chat:number,user:number)=>checked(service.from('telegram_links').select('*').eq('chat_id',chat).eq('telegram_user_id',user).eq('enabled',true).maybeSingle()),
  zone:async(owner:string)=>(await checked(service.from('notification_preferences').select('time_zone').eq('user_id',owner).maybeSingle()))?.time_zone||'Europe/Moscow',
