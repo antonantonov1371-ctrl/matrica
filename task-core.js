@@ -17,7 +17,7 @@
   }
   function encode(task,userId){
     const t=task,meta={...(t._meta||{}),matrica:2,kind:t.isFolder?'folder':'task',folderId:t.folderId||'',note:t.note||''};
-    const optional={inboxQuadrant:!t.date&&t.folderId&&Number.isInteger(t.cat)?t.cat:undefined,folderRank:t.folderRank,tags:tags(t.tags),flagged:!!t.flagged,subtasks:subtasks(t.subtasks),repeat:repeat(t.repeat),url:t.url||'',rank:t.rank,deletedAt:t.deletedAt||null,deletedState:t.deletedState||null,seriesId:t.seriesId||null,nextOccurrenceId:t.nextOccurrenceId||null,generatedFrom:t.generatedFrom||null};
+    const optional={inboxQuadrant:!t.date&&(t.folderId||t.cat!==1)&&Number.isInteger(t.cat)?t.cat:undefined,folderRank:t.folderRank,tags:tags(t.tags),flagged:!!t.flagged,subtasks:subtasks(t.subtasks),repeat:repeat(t.repeat),url:t.url||'',rank:t.rank,deletedAt:t.deletedAt||null,deletedState:t.deletedState||null,seriesId:t.seriesId||null,nextOccurrenceId:t.nextOccurrenceId||null,generatedFrom:t.generatedFrom||null};
     for(const [key,value] of Object.entries(optional)){if(value!=null&&value!==false&&value!==''&&(!Array.isArray(value)||value.length))meta[key]=value;else delete meta[key]}
     // Keep existing v2 envelopes and unknown keys even when all new fields are empty.
     const hasMeta=t._meta||t.isFolder||t.folderId||Object.keys(meta).some(k=>!['matrica','kind','folderId','note'].includes(k));

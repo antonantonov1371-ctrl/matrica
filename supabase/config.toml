@@ -1,4 +1,7 @@
 [functions.matrica-push]
-# Requests are authenticated explicitly: user JWT for device actions,
-# a separate scheduler secret for background dispatch. No service key in the browser.
+# User JWT and separate scheduler secret are verified inside the handler.
+verify_jwt = false
+
+[functions.matrica-telegram]
+# Telegram webhook secret, scheduler secret, or validated Supabase user JWT.
 verify_jwt = false
