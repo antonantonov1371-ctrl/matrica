@@ -78,7 +78,7 @@ cloudSignOut=async function(){
 };
 function openInstallHelp(){
  document.getElementById('modalroot').innerHTML=`<div class="modalback" onclick="if(event.target===this)closeModal()"><section class="modal"><h2>Матрица как приложение</h2><p><b>iPhone:</b> откройте этот сайт в Safari → «Поделиться» → «На экран Домой». Включите «Открывать как веб-приложение», если такой переключатель есть.</p><p><b>Mac:</b> в Safari выберите «Файл» → «Добавить в Dock».</p><p class="small">На каждом устройстве войдите в один аккаунт и дождитесь синхронизации. Затем задачи можно создавать и менять без интернета. После подключения изменения объединятся. Уведомления требуют подключения.</p><p class="small" id="offline-ready">Проверяем готовность к работе без сети…</p><button class="btn primary" onclick="closeModal()">Понятно</button></section></div>`;
- if('caches' in window)caches.open('matrica-shell-20261123-lists-v1').then(c=>c.match(new URL('index.html',document.baseURI))).then(ready=>{const el=document.getElementById('offline-ready');if(el)el.textContent=ready?'Приложение сохранено для запуска без интернета.':'Оставьте приложение открытым с интернетом до завершения загрузки.'});
+ if('caches' in window)caches.open('matrica-shell-20261124-telegram-v1').then(c=>c.match(new URL('index.html',document.baseURI))).then(ready=>{const el=document.getElementById('offline-ready');if(el)el.textContent=ready?'Приложение сохранено для запуска без интернета.':'Оставьте приложение открытым с интернетом до завершения загрузки.'});
 }
 if('serviceWorker' in navigator&&window.isSecureContext){
  navigator.serviceWorker.register(new URL('./sw.js',document.baseURI),{scope:new URL('./',document.baseURI).pathname,updateViaCache:'none'}).catch(e=>console.error('Offline installation',e));
