@@ -1,0 +1,38 @@
+name: Native Apple build
+on:
+  pull_request:
+    paths: ['native/**', '.github/workflows/native-apple.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Test task preservation, merging, recurrence and reminder times
+        run: swift test --package-path native/Core
+      - name: Build native Mac app
+        run: xcodebuild -project native/Matrica.xcodeproj -scheme Matrica -configuration Debug -destination 'generic/platform=macOS' -derivedDataPath build/mac CODE_SIGNING_ALLOWED=NO build
+      - name: Build native iPhone app for Simulator
+        run: xcodebuild -project native/Matrica.xcodeproj -scheme Matrica -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath build/ios CODE_SIGNING_ALLOWED=NO build
+      - name: Build iPhone device app without signing
+        run: xcodebuild -project native/Matrica.xcodeproj -scheme Matrica -configuration Release -destination 'generic/platform=iOS' -derivedDataPath build/device CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+      - name: Package unsigned IPA for personal signing
+        run: |
+          mkdir -p build/ipa/Payload
+          ditto build/device/Build/Products/Release-iphoneos/Matrica.app build/ipa/Payload/Matrica.app
+          cd build/ipa
+          ditto -c -k --keepParent Payload ../Matrica-iPhone-unsigned.ipa
+          unzip -t ../Matrica-iPhone-unsigned.ipa
+      - name: Upload iPhone installation file
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Matrica-iPhone-unsigned
+          path: build/Matrica-iPhone-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 30
